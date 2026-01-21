@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="248dp"
+        android:layout_height="231dp"
+        android:layout_marginTop="40dp"
+        android:contentDescription="Logo"
+        android:src="@mipmap/logoapp_foreground"
+        app:layout_constraintBottom_toTopOf="@id/txtTitulo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.59000003" />
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/txtTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Sesión"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/imgLogo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Email -->
+    <EditText
+        android:id="@+id/edtEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Correo electrónico"
+        android:inputType="textEmailAddress"
+        android:padding="12dp"
+        android:background="@android:drawable/edit_text"
+        app:layout_constraintTop_toBottomOf="@id/txtTitulo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"/>
+
+    <!-- Contraseña -->
+    <EditText
+        android:id="@+id/edtPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:padding="12dp"
+        android:background="@android:drawable/edit_text"
+        app:layout_constraintTop_toBottomOf="@id/edtEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Botón Login -->
+
+    <!-- Registro -->
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="104dp"
+        android:backgroundTint="#6200EE"
+        android:text="Ingresar"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edtPassword" />
+
+    <TextView
+        android:id="@+id/txtRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿No tienes cuenta? Regístrate"
+        android:textColor="#6200EE"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
