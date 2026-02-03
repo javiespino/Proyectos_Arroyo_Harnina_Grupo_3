@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="gym_blue">#0A2E46</color>
+    <color name="gym_orange">#FF6D33</color>
+    <color name="gym_bg">#F8F9FB</color>
+    <color name="gym_text_dark">#1A1A1A</color>
+    <color name="gym_gray">#9E9E9E</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple">#A930BE</color>
