@@ -21,21 +21,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.logindsgn); // 🔹 nombre de tu layout correcto
+        setContentView(R.layout.logindsgn);
 
-        // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Vincular vistas
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        txtRegister = findViewById(R.id.txtRegister); // TextView para ir al registro
+        txtRegister = findViewById(R.id.txtRegister);
 
-        // BOTÓN LOGIN
         btnLogin.setOnClickListener(v -> loginUsuario());
 
-        // TEXTO REGISTRO → abrir RegistroActivity
         txtRegister.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
             startActivity(intent);
@@ -58,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
-                        finish();
 
                     } else {
                         Toast.makeText(this, "Email o contraseña incorrectos ❌", Toast.LENGTH_SHORT).show();

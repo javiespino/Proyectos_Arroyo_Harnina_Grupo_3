@@ -11,18 +11,36 @@
         android:roundIcon="@mipmap/logoapp"
         android:supportsRtl="true"
         android:theme="@style/Theme.SportHub">
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
         <activity
             android:name=".RegistroActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".CalendarioActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".DetallesActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RutinaActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
