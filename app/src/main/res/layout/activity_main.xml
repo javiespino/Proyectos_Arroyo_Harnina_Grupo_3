@@ -49,29 +49,55 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="end">
-            <TextView
-                android:id="@+id/tvClima"
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:background="@drawable/bg_rounded_chip"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:text="--°C"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textColor="@color/gym_blue"/>
-            <TextView
-                android:id="@+id/tvHumedadHeader"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:layout_marginBottom="6dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/temperatura"
+                    app:tint="@color/gym_blue" />
+                <TextView
+                    android:id="@+id/tvClima"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="--°C"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_blue"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:background="@drawable/bg_rounded_chip"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:text="--%"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textColor="@color/gym_orange"/>
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/humedad"
+                    app:tint="@color/gym_orange" />
+                <TextView
+                    android:id="@+id/tvHumedadHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="--%"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_orange"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
