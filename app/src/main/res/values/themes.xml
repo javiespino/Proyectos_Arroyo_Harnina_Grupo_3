@@ -6,4 +6,12 @@
     </style>
 
     <style name="Theme.SportHub" parent="Base.Theme.SportHub" />
+
+    <style name="CalendarDateText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/gym_blue</item>
+    </style>
+
+    <style name="CalendarWeekDayText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/gym_gray</item>
+    </style>
 </resources>
