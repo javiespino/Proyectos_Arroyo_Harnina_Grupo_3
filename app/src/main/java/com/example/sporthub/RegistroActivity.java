@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -32,20 +33,21 @@ public class RegistroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registrolayout);
 
+        // Vistas
         edtName = findViewById(R.id.edtName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnRegister = findViewById(R.id.btnRegister);
         tvGoToLogin = findViewById(R.id.tvGoToLogin);
 
+        // Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         btnRegister.setOnClickListener(v -> registerUser());
 
         tvGoToLogin.setOnClickListener(v -> {
-            Intent intent = new Intent(RegistroActivity.this, LoginActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
     }
@@ -55,11 +57,13 @@ public class RegistroActivity extends AppCompatActivity {
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
 
-        if(name.isEmpty() || email.isEmpty() || password.isEmpty()){
+        // Validaciones
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(password.length() < 6){
+
+        if (password.length() < 6) {
             Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -67,44 +71,62 @@ public class RegistroActivity extends AppCompatActivity {
         btnRegister.setEnabled(false);
         btnRegister.setText("Registrando...");
 
+        // Crear usuario en Firebase Auth
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    if(task.isSuccessful()){
+
+                    if (task.isSuccessful()) {
                         Log.d(TAG, "✅ Usuario creado en Firebase Auth");
 
-                        String userId = mAuth.getCurrentUser().getUid();
+                        FirebaseUser user = task.getResult().getUser();
+
+                        if (user == null) {
+                            Toast.makeText(this, "Error inesperado al crear usuario", Toast.LENGTH_LONG).show();
+                            resetButton();
+                            return;
+                        }
+
+                        String userId = user.getUid();
+
+                        // Datos a guardar en Firestore
                         Map<String, Object> userMap = new HashMap<>();
                         userMap.put("name", name);
                         userMap.put("email", email);
+                        userMap.put("rol", "c"); // 👈 rol por defecto c== cliente
+                        userMap.put("createdAt", System.currentTimeMillis());
 
-                        db.collection("users").document(userId)
+
+                        // Guardar en Firestore
+                        db.collection("users")
+                                .document(userId)
                                 .set(userMap)
-                                .addOnSuccessListener(aVoid -> {
+                                .addOnSuccessListener(unused -> {
                                     Log.d(TAG, "✅ Datos guardados en Firestore");
                                     Toast.makeText(this, "Registro exitoso ✅", Toast.LENGTH_SHORT).show();
 
-                                    // Ahora SÍ navegar a MainActivity
-                                    Intent intent = new Intent(RegistroActivity.this, MainActivity.class);
-                                    startActivity(intent);
+                                    startActivity(new Intent(this, MainActivity.class));
                                     finish();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e(TAG, "❌ Error al guardar en Firestore", e);
-                                    Toast.makeText(this, "Error al guardar datos: " + e.getMessage(),
+                                    Log.e(TAG, "❌ Error Firestore", e);
+                                    Toast.makeText(this,
+                                            "Error al guardar datos: " + e.getMessage(),
                                             Toast.LENGTH_LONG).show();
-
-                                    btnRegister.setEnabled(true);
-                                    btnRegister.setText("Registrar");
+                                    resetButton();
                                 });
 
                     } else {
-                        Log.e(TAG, "❌ Error al crear usuario", task.getException());
-                        Toast.makeText(this, "Error al registrar: " + task.getException().getMessage(),
+                        Log.e(TAG, "❌ Error Auth", task.getException());
+                        Toast.makeText(this,
+                                "Error al registrar: " + task.getException().getMessage(),
                                 Toast.LENGTH_LONG).show();
-
-                        btnRegister.setEnabled(true);
-                        btnRegister.setText("Registrar");
+                        resetButton();
                     }
                 });
+    }
+
+    private void resetButton() {
+        btnRegister.setEnabled(true);
+        btnRegister.setText("Registrar");
     }
 }
