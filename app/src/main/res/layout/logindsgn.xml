@@ -15,7 +15,7 @@
         android:layout_height="231dp"
         android:layout_marginTop="40dp"
         android:contentDescription="Logo"
-        android:src="@mipmap/logoapp_foreground"
+        android:src="@drawable/logosporthub"
         app:layout_constraintBottom_toTopOf="@id/txtTitulo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
