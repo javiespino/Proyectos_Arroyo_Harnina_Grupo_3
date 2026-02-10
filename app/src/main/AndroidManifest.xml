@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
@@ -12,41 +11,42 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/logoapp"
+        android:icon="@drawable/logosporthubplano"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/logoapp"
+        android:roundIcon="@drawable/logosporthubplano"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SportHub">
-
+        android:theme="@style/Theme.SportHub"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ModificarUsuario"
+            android:exported="false" />
+        <activity
+            android:name=".PerfilUsuario"
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
         <activity
             android:name=".RegistroActivity"
             android:exported="false" />
-
         <activity
             android:name=".CalendarioActivity"
             android:exported="false" />
-
         <activity
             android:name=".DetallesActivity"
             android:exported="false" />
-
         <activity
             android:name=".RutinaActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>
