@@ -6,80 +6,136 @@
     android:id="@+id/rutinaLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.sporthub.RutinaActivity"
-    android:padding="16dp">
+    android:background="@color/gym_bg"
+    tools:context="com.example.sporthub.RutinaActivity">
 
-    <!-- Título -->
+    <View
+        android:id="@+id/headerBackground"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/gym_blue"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvTituloRutina"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rutina semanal"
-        android:textSize="20sp"
+        android:layout_marginStart="20dp"
+        android:text="Rutina Semanal"
+        android:textColor="@color/white"
+        android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/headerBackground"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toTopOf="@id/headerBackground"
+        app:layout_constraintVertical_bias="0.4" />
 
-    <!-- Spinner para seleccionar día -->
-    <TextView
-        android:id="@+id/tvSeleccionDia"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnExportarPdf"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Seleccionar día"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTituloRutina"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <Spinner
-        android:id="@+id/spinnerDias"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tvSeleccionDia"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="16dp"
+        android:text="Exportar"
+        android:textColor="@color/white"
+        app:strokeColor="@color/white"
+        app:icon="@android:drawable/ic_menu_save"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/tvTituloRutina"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        app:layout_constraintTop_toTopOf="@id/tvTituloRutina" />
 
-    <!-- Spinner para seleccionar ejercicio -->
-    <TextView
-        android:id="@+id/tvSeleccionEjercicio"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardConfig"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Seleccionar ejercicio"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/spinnerDias"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="-25dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@id/headerBackground">
 
-    <Spinner
-        android:id="@+id/spinnerEjercicios"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tvSeleccionEjercicio"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-    <!-- Botón añadir ejercicio -->
-    <Button
-        android:id="@+id/btnAnadirEjercicio"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Añadir ejercicio"
-        app:layout_constraintTop_toBottomOf="@id/spinnerEjercicios"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-    <!-- RecyclerView para mostrar días + ejercicios -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Día de entreno"
+                        android:textColor="@color/gym_gray"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <Spinner
+                        android:id="@+id/spinnerDias"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="?android:attr/editTextBackground" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ejercicio"
+                        android:textColor="@color/gym_gray"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <Spinner
+                        android:id="@+id/spinnerEjercicios"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="?android:attr/editTextBackground" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAnadirEjercicio"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="20dp"
+                android:text="Añadir a mi plan"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                app:backgroundTint="@color/gym_orange"
+                app:cornerRadius="12dp"
+                app:icon="@android:drawable/ic_input_add" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerEjercicios"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/btnAnadirEjercicio"
+        android:layout_marginTop="12dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/cardConfig"
+        tools:listitem="@android:layout/simple_list_item_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
