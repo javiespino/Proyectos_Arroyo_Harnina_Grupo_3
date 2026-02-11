@@ -18,6 +18,9 @@
         android:theme="@style/Theme.SportHub"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".Chat"
+            android:exported="false" />
+        <activity
             android:name=".ModificarUsuario"
             android:exported="false" />
         <activity

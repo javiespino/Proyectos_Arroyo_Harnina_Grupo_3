@@ -73,7 +73,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="104dp"
-        android:backgroundTint="#6200EE"
+        android:backgroundTint="@color/gym_blue"
         android:text="Ingresar"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
@@ -86,12 +86,12 @@
         android:id="@+id/txtRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="¿No tienes cuenta? Regístrate"
-        android:textColor="#6200EE"
+        android:textColor="@color/gym_orange"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/btnLogin"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

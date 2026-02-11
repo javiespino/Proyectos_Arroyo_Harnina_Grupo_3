@@ -6,8 +6,6 @@ import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -43,14 +41,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this); // Habilita el diseño moderno de borde a borde
         setContentView(R.layout.activity_main);
 
-        // 1. Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // 2. Vincular Vistas
         tvTemperatura = findViewById(R.id.tvClima);
         tvHumedadHeader = findViewById(R.id.tvHumedadHeader);
         tvPorcentajeCentral = findViewById(R.id.tvPorcentajeCentral);
@@ -58,12 +53,10 @@ public class MainActivity extends AppCompatActivity {
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // 3. Configuración inicial
         configurarMargenes();
         configurarNavegacion();
         configurarBotonesAccion();
 
-        // 4. Carga de datos
         cargarDatosMeteorologicos();
         obtenerDatosUsuarioFirebase();
     }
@@ -116,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void configurarNavegacion() {
+
+   void configurarNavegacion() {
 
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
 
@@ -124,53 +118,58 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_inicio) {
-                return true; // Ya estamos aquí
+                return true;
             } else if (id == R.id.nav_perfil) {
                 startActivity(new Intent(this, PerfilUsuario.class));
-                overridePendingTransition(0, 0); // Transición suave sin parpadeo
+                overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_rutinas) {
-                // startActivity(new Intent(this, RutinaActivity.class));
+                startActivity(new Intent(this, RutinaActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
-            }
-            // Aquí puedes añadir nav_reservas o nav_chat
+            } else if (id == R.id.nav_reservas) {
+                startActivity(new Intent(this, CalendarioActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }else if (id == R.id.nav_chat) {
+           startActivity(new Intent(this, Chat.class));
+           overridePendingTransition(0, 0);
+           return true;
+       }
+
             return false;
         });
     }
 
     private void configurarBotonesAccion() {
-        // 1. Botón "Detalles" (en la tarjeta de progreso) -> DetallesActivity
+
         findViewById(R.id.btnDetalles).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DetallesActivity.class);
             startActivity(intent);
         });
 
-        // 2. Botón "Ver Calendario" -> AHORA VA A CalendarioActivity (Reservas)
-        // Según tu petición, aquí es donde el usuario gestionará sus reservas
+
         findViewById(R.id.btnVerCalendario).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CalendarioActivity.class);
             startActivity(intent);
         });
 
-        // 3. Tarjeta de Rutina (CardView) -> RutinaActivity
         findViewById(R.id.cardRutina).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RutinaActivity.class);
             startActivity(intent);
         });
 
-        // 4. Tarjeta de Reservar (Si quieres que ambos botones lleven al mismo sitio)
         findViewById(R.id.cardReservar).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CalendarioActivity.class);
             startActivity(intent);
         });
 
-        // 5. FAB (Botón flotante del ChatBot)
+        //TODO
         findViewById(R.id.fab).setOnClickListener(v ->
                 Toast.makeText(this, "Asistente SportHub activado", Toast.LENGTH_SHORT).show());
     }
 
     private void configurarMargenes() {
-        // Ajusta el padding para que el contenido no quede bajo la barra de estado o navegación
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

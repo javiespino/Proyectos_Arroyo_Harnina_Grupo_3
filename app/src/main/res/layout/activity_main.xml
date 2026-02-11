@@ -18,8 +18,8 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:src="@drawable/usuario3"
             android:contentDescription="Perfil" />
 
@@ -33,13 +33,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bienvenido,"
+                android:textSize="12sp"
                 android:textColor="@color/gym_gray" />
             <TextView
                 android:id="@+id/tvNombreUsuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cargando..."
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/gym_blue" />
         </LinearLayout>
@@ -56,21 +57,21 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="@drawable/bg_rounded_chip"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:layout_marginBottom="6dp">
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginBottom="4dp">
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:src="@drawable/temperatura"
                     app:tint="@color/gym_blue" />
                 <TextView
                     android:id="@+id/tvClima"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="4dp"
                     android:text="--°C"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/gym_blue"/>
             </LinearLayout>
@@ -81,20 +82,20 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="@drawable/bg_rounded_chip"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp">
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp">
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:src="@drawable/humedad"
                     app:tint="@color/gym_orange" />
                 <TextView
                     android:id="@+id/tvHumedadHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="4dp"
                     android:text="--%"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/gym_orange"/>
             </LinearLayout>
@@ -104,40 +105,41 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardProgress"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="24dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="20dp"
         app:cardBackgroundColor="@color/gym_blue"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="20dp">
+            android:padding="16dp">
             <TextView
                 android:id="@+id/tvSemana"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SEMANA 12"
                 android:textColor="#80FFFFFF"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
             <TextView
                 android:id="@+id/tvTitle"
-                android:layout_width="160dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:text="Tu objetivo está cerca"
                 android:textColor="@android:color/white"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/tvSemana"
                 app:layout_constraintStart_toStartOf="parent" />
             <Button
                 android:id="@+id/btnDetalles"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="36dp"
                 android:text="Ver Detalles"
+                android:textSize="11sp"
                 android:backgroundTint="@color/gym_orange"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
@@ -146,8 +148,8 @@
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:max="100"
                 android:progressDrawable="@drawable/circular_progress"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -160,7 +162,7 @@
                 android:text="--%"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 app:layout_constraintTop_toTopOf="@id/progressBar"
                 app:layout_constraintBottom_toBottomOf="@id/progressBar"
                 app:layout_constraintStart_toStartOf="@id/progressBar"
@@ -173,10 +175,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Acciones Rápidas"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/gym_blue"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/cardProgress"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -187,6 +189,7 @@
         android:layout_height="wrap_content"
         android:text="Ver Calendario"
         android:textColor="@color/gym_orange"
+        android:textSize="12sp"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/labelAcciones"
@@ -195,64 +198,66 @@
     <LinearLayout
         android:id="@+id/rowActions"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="110dp"
         android:orientation="horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/labelAcciones">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardRutina"
             android:layout_width="0dp"
-            android:layout_height="140dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            app:cardCornerRadius="20dp">
+            android:layout_marginEnd="6dp"
+            app:cardCornerRadius="16dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center">
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:background="@drawable/bg_circle_orange_light"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/mancuerna" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Mi Rutina"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/gym_blue"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginTop="4dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardReservar"
             android:layout_width="0dp"
-            android:layout_height="140dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            app:cardCornerRadius="20dp">
+            android:layout_marginStart="6dp"
+            app:cardCornerRadius="16dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center">
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:src="@drawable/reserva"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:background="@drawable/bg_circle_blue_light" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Reservar"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/gym_blue"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginTop="4dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
@@ -263,9 +268,9 @@
         android:layout_height="wrap_content"
         android:text="Próxima Clase"
         android:textStyle="bold"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="@color/gym_blue"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/rowActions"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -273,19 +278,19 @@
         android:id="@+id/cardZumba"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:cardCornerRadius="20dp"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/labelProxima">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:padding="10dp">
             <ImageView
                 android:id="@+id/imgZumba"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/zumba"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -304,11 +309,12 @@
                     android:text="Zumba Fitness"
                     android:textStyle="bold"
                     android:textColor="@color/gym_blue"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🕒 18:00 - 19:00"
+                    android:textSize="12sp"
                     android:textColor="@color/gym_gray"/>
             </LinearLayout>
             <TextView
@@ -316,9 +322,10 @@
                 android:layout_height="wrap_content"
                 android:text="HOY"
                 android:background="@drawable/bg_chip_green"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
                 android:textColor="#2E7D32"
+                android:textSize="11sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -329,7 +336,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:background="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -341,10 +348,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/robot"
+        app:fabSize="mini"
         app:tint="@android:color/white"
         app:backgroundTint="@color/gym_orange"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        android:layout_margin="12dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
