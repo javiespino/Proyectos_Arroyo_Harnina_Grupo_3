@@ -35,10 +35,12 @@ public class RutinaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_DIA) {
+            // Asegúrate de que item_dia.xml tenga el TextView con id: tvNombreDia
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_dia, parent, false);
             return new DiaViewHolder(view);
         } else {
+            // Asegúrate de que item_ejercicio.xml tenga los IDs: tvNombreEjercicio e imgGrupoMuscular
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_ejercicio, parent, false);
             return new EjercicioViewHolder(view);
@@ -53,9 +55,14 @@ public class RutinaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else {
             Ejercicio ejercicio = (Ejercicio) items.get(position);
             EjercicioViewHolder evh = (EjercicioViewHolder) holder;
+
             evh.tvNombreEjercicio.setText(ejercicio.getNombre());
 
-            switch (ejercicio.getGrupoMuscular().toLowerCase()) {
+            // Normalizamos el texto: quitamos espacios y pasamos a minúsculas
+            String grupo = ejercicio.getGrupoMuscular().toLowerCase().trim();
+
+            // Selección de imagen dinámica
+            switch (grupo) {
                 case "pecho":
                     evh.imgGrupoMuscular.setImageResource(R.drawable.ic_pecho);
                     break;
@@ -69,7 +76,9 @@ public class RutinaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     evh.imgGrupoMuscular.setImageResource(R.drawable.ic_brazo);
                     break;
                 default:
-                    evh.imgGrupoMuscular.setImageResource(R.drawable.ic_default_musculo);
+                    // Imagen genérica si el grupo no coincide
+                    evh.imgGrupoMuscular.setImageResource(R.drawable.ic_brazo);
+                    break;
             }
         }
     }
@@ -79,6 +88,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return items.size();
     }
 
+    // ViewHolder para los Headers de los días
     static class DiaViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombreDia;
         public DiaViewHolder(@NonNull View itemView) {
@@ -87,6 +97,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
+    // ViewHolder para los ejercicios individuales
     static class EjercicioViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombreEjercicio;
         ImageView imgGrupoMuscular;

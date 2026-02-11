@@ -47,7 +47,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.Ejer
                 holder.imgGrupoMuscular.setImageResource(R.drawable.ic_brazo);
                 break;
             default:
-                holder.imgGrupoMuscular.setImageResource(R.drawable.ic_default_musculo);
+                holder.imgGrupoMuscular.setImageResource(R.drawable.ic_brazo);
         }
     }
 

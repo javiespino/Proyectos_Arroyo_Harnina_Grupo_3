@@ -84,7 +84,14 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         tvTemperatura.setText(temp + "°C");
                         tvHumedadHeader.setText(hum + "%");
-                        int valHum = (int) Double.parseDouble(hum);
+                        int valHum;
+
+                        try {
+                            valHum = (int) Double.parseDouble(hum);
+                        } catch (Exception e) {
+                            valHum = 0;
+                        }
+
                         progressBarHumedad.setProgress(valHum);
                         tvPorcentajeCentral.setText(valHum + "%");
                     });
