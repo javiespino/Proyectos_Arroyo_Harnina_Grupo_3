@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gym_bg"
+    android:padding="16dp">
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- HEADER                                         -->
+    <!-- ══════════════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="Perfil"
+            android:src="@drawable/trainer_man_people_avatar_person_icon_224779" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bienvenido,"
+                android:textColor="@color/gym_gray" />
+            <TextView
+                android:id="@+id/tvNombreEntrenador"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cargando..."
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/gym_blue" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_rounded_chip"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:layout_marginBottom="6dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/temperatura"
+                    app:tint="@color/gym_blue" />
+                <TextView
+                    android:id="@+id/tvClima"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="--°C"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_blue"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_rounded_chip"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/humedad"
+                    app:tint="@color/gym_orange" />
+                <TextView
+                    android:id="@+id/tvHumedadHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="--%"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_orange"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- TÍTULO: ACCIONES RÁPITAS                       -->
+    <!-- ══════════════════════════════════════════════ -->
+    <TextView
+        android:id="@+id/labelAcciones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ACCIONES RÁPITAS"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="@color/gym_text_dark"
+        android:letterSpacing="0.05"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- FILA 1: CLIENTES | RUTINAS                     -->
+    <!-- ══════════════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/rowActions1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/labelAcciones">
+
+        <!-- CARD: CLIENTES -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardClientes"
+            android:layout_width="0dp"
+            android:layout_height="160dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:background="@drawable/bg_circle_blue_light"
+                    android:padding="14dp"
+                    android:src="@drawable/pp_usuario" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CLIENTES"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_text_dark"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.04"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="10dp" />
+
+                <Button
+                    android:id="@+id/btnGestionar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:text="GESTIONAR"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/gym_orange"
+                    android:paddingHorizontal="14dp"
+                    android:textAllCaps="true"
+                    app:cornerRadius="20dp"
+                    style="@style/Widget.MaterialComponents.Button" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CARD: RUTINAS -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardRutinas"
+            android:layout_width="0dp"
+            android:layout_height="160dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:background="@drawable/bg_circle_blue_light"
+                    android:padding="14dp"
+                    android:src="@drawable/mancuerna" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RUTINAS"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_text_dark"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.04"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="10dp" />
+
+                <Button
+                    android:id="@+id/btnCrearEditar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:text="CREAR / EDITAR"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/gym_orange"
+                    android:paddingHorizontal="14dp"
+                    android:textAllCaps="true"
+                    app:cornerRadius="20dp"
+                    style="@style/Widget.MaterialComponents.Button" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- FILA 2: MI HORARIO | REPORTES                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/rowActions2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/rowActions1">
+
+        <!-- CARD: MI HORARIO / AUSENCIAS -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardHorario"
+            android:layout_width="0dp"
+            android:layout_height="160dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:background="@drawable/bg_circle_blue_light"
+                    android:padding="14dp"
+                    android:src="@drawable/reserva" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MI HORARIO /\nAUSENCIAS"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_text_dark"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.04"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="10dp" />
+
+                <Button
+                    android:id="@+id/btnConfigurar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:text="CONFIGURAR"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/gym_orange"
+                    android:paddingHorizontal="14dp"
+                    android:textAllCaps="true"
+                    app:cornerRadius="20dp"
+                    style="@style/Widget.MaterialComponents.Button" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CARD: REPORTES / SEGUIMIENTO -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardReportes"
+            android:layout_width="0dp"
+            android:layout_height="160dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:background="@drawable/bg_circle_blue_light"
+                    android:padding="14dp"
+                    android:src="@drawable/informe" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="REPORTES /\nSEGUMIMENTO"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_text_dark"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.04"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="10dp" />
+
+                <Button
+                    android:id="@+id/btnVerAnaliticas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:text="VER ANALÍTICAS"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/gym_orange"
+                    android:paddingHorizontal="14dp"
+                    android:textAllCaps="true"
+                    app:cornerRadius="20dp"
+                    style="@style/Widget.MaterialComponents.Button" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- TÍTULO: PRÓXIMAS SESIONES                      -->
+    <!-- ══════════════════════════════════════════════ -->
+    <TextView
+        android:id="@+id/labelProximas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Próximas Sesiones"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="@color/gym_text_dark"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/rowActions2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- SESSION CARD 1: ZUMBA FITNESS                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardZumba"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="2dp"
+        app:layout_constraintTop_toBottomOf="@id/labelProximas">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/imgZumba"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/zumba"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp"
+                app:layout_constraintStart_toEndOf="@id/imgZumba"
+                app:layout_constraintTop_toTopOf="@id/imgZumba"
+                app:layout_constraintBottom_toBottomOf="@id/imgZumba">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Zumba Fitness"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_text_dark"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🕒 18:00 - 19:00"
+                    android:textColor="@color/gym_gray"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Disponible"
+                android:background="@drawable/bg_chip_green"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="5dp"
+                android:textColor="#2DB96B"
+                android:textStyle="bold"
+                android:textSize="11.5sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- SESSION CARD 2: ENTRENAMIENTO FUNCIONAL        -->
+    <!-- ══════════════════════════════════════════════ -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardFuncional"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="2dp"
+        app:layout_constraintTop_toBottomOf="@id/cardZumba">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/imgFuncional"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/zumba"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp"
+                app:layout_constraintStart_toEndOf="@id/imgFuncional"
+                app:layout_constraintTop_toTopOf="@id/imgFuncional"
+                app:layout_constraintBottom_toBottomOf="@id/imgFuncional">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Entranimieno Funcional"
+                    android:textStyle="bold"
+                    android:textColor="@color/gym_text_dark"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🕒 18:00 - 19:00"
+                    android:textColor="@color/gym_gray"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- BOTTOM NAVIGATION                              -->
+    <!-- ══════════════════════════════════════════════ -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu_entrenador" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

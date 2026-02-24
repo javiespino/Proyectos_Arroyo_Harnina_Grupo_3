@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_rutinas_extra"
+        android:icon="@drawable/mancuerna"
+        android:title="Rutinas" />
+    <item
+        android:id="@+id/nav_reportes"
+        android:icon="@drawable/informe"
+        android:title="Reportes" />
+    <item
+        android:id="@+id/nav_perfil"
+        android:icon="@drawable/trainer_man_people_avatar_person_icon_224779"
+        android:title="Mi Perfil" />
+</menu>
