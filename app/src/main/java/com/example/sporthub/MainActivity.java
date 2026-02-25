@@ -3,9 +3,12 @@ package com.example.sporthub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -38,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
     private final String WEATHER_URL = "https://api.weather.com/v2/pws/observations/current?stationId=IALMEN70&format=json&units=m&apiKey=908477f6f2b84c6c8477f6f2b80c6c03";
     private OkHttpClient cliente = new OkHttpClient();
 
+    // --- Chat flotante ---
+    private FrameLayout chatContainer;
+    private EditText editMessage;
+    private TextView txtResponse;
+    private Button btnSend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +62,94 @@ public class MainActivity extends AppCompatActivity {
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
+        // --- Inicializar chat flotante ---
+        chatContainer = findViewById(R.id.chatContainer);
+        editMessage = findViewById(R.id.editMessage);
+        txtResponse = findViewById(R.id.txtResponse);
+        btnSend = findViewById(R.id.btnSend);
+
+        // Mostrar/ocultar chat al tocar el FAB
+        findViewById(R.id.fab).setOnClickListener(v -> {
+            if (chatContainer.getVisibility() == View.GONE) {
+                chatContainer.setVisibility(View.VISIBLE);
+            } else {
+                chatContainer.setVisibility(View.GONE);
+            }
+        });
+
+        // Botón enviar mensaje
+        btnSend.setOnClickListener(v -> {
+            String message = editMessage.getText().toString().trim();
+            if (!message.isEmpty()) {
+                sendMessageToWebhook(message);
+                editMessage.setText("");
+            }
+        });
+
         configurarMargenes();
         configurarNavegacion();
-        configurarBotonesAccion();
 
         cargarDatosMeteorologicos();
         obtenerDatosUsuarioFirebase();
     }
 
+    // --- Función para enviar mensaje al webhook de Make/OpenAI ---
+    private void sendMessageToWebhook(String message) {
+        String WEBHOOK_URL = "https://hook.eu1.make.com/q7n6l956tkrhen73sk874pf6mmyyb4dt";
+
+        OkHttpClient client = new OkHttpClient();
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("message", message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            txtResponse.setText("Error creando JSON");
+            return;
+        }
+
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                jsonBody.toString(), okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url(WEBHOOK_URL)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> txtResponse.setText("Error: " + e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String res = response.body() != null ? response.body().string() : "Sin respuesta";
+
+                runOnUiThread(() -> {
+                    try {
+                        // Parseamos el JSON que nos devuelve Make
+                        JSONObject json = new JSONObject(res);
+
+                        // Extraemos el texto del chatbot (según el path de tu webhook)
+                        String chatbotResponse = json.optString("message"); // Si tu webhook devuelve {"message":"texto"}
+
+                        // Si tu webhook devuelve solo texto plano, usa directamente 'res'
+                        if(chatbotResponse.isEmpty()) {
+                            chatbotResponse = res;
+                        }
+
+                        txtResponse.setText(chatbotResponse);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        txtResponse.setText(res); // fallback en caso de error
+                    }
+                });
+            }
+        });
+    }
+
+    // --- Funciones existentes ---
     private void cargarDatosMeteorologicos() {
         Request request = new Request.Builder().url(WEATHER_URL).build();
         cliente.newCall(request).enqueue(new Callback() {
@@ -116,9 +205,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-   void configurarNavegacion() {
-
+    void configurarNavegacion() {
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -138,42 +225,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, CalendarioActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
-            }else if (id == R.id.nav_chat) {
-           startActivity(new Intent(this, Chat.class));
-           overridePendingTransition(0, 0);
-           return true;
-       }
-
+            }
+            // Eliminamos nav_chat que abría otra activity
             return false;
         });
-    }
-
-    private void configurarBotonesAccion() {
-
-        findViewById(R.id.btnDetalles).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DetallesActivity.class);
-            startActivity(intent);
-        });
-
-
-        findViewById(R.id.btnVerCalendario).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CalendarioActivity.class);
-            startActivity(intent);
-        });
-
-        findViewById(R.id.cardRutina).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RutinaActivity.class);
-            startActivity(intent);
-        });
-
-        findViewById(R.id.cardReservar).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CalendarioActivity.class);
-            startActivity(intent);
-        });
-
-        //TODO
-        findViewById(R.id.fab).setOnClickListener(v ->
-                Toast.makeText(this, "Asistente SportHub activado", Toast.LENGTH_SHORT).show());
     }
 
     private void configurarMargenes() {
