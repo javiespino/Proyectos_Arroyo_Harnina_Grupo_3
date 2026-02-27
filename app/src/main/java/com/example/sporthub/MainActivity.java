@@ -28,8 +28,14 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView tvTemperatura, tvHumedadHeader, tvPorcentajeCentral, tvNombreUsuario;
-    private ProgressBar progressBarHumedad;
+    // Header: temperatura y humedad (sensores físicos)
+    private TextView tvTemperatura, tvHumedadHeader;
+
+    // Card azul: progreso de reservas completadas
+    private ProgressBar progressBar;
+    private TextView tvPorcentajeCentral;
+
+    private TextView tvNombreUsuario;
     private BottomNavigationView bottomNavigationView;
 
     private FirebaseAuth mAuth;
@@ -46,20 +52,29 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        tvTemperatura = findViewById(R.id.tvClima);
+        // Header (sensores)
+        tvTemperatura   = findViewById(R.id.tvClima);
         tvHumedadHeader = findViewById(R.id.tvHumedadHeader);
-        tvPorcentajeCentral = findViewById(R.id.tvPorcentajeCentral);
-        progressBarHumedad = findViewById(R.id.progressBar);
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
+
+        // Card azul (reservas)
+        progressBar         = findViewById(R.id.progressBar);
+        tvPorcentajeCentral = findViewById(R.id.tvPorcentajeCentral);
+
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
         configurarMargenes();
         configurarNavegacion();
         configurarBotonesAccion();
 
-        cargarDatosMeteorologicos();
-        obtenerDatosUsuarioFirebase();
+        cargarDatosMeteorologicos();    // → tvClima + tvHumedadHeader (header)
+        obtenerDatosUsuarioFirebase();  // → tvNombreUsuario
+        cargarProgresoReservas();       // → progressBar + tvPorcentajeCentral (card azul)
     }
+
+    // ══════════════════════════════════════════════════════════════
+    // Meteorología → header (tvClima + tvHumedadHeader)
+    // ══════════════════════════════════════════════════════════════
 
     private void cargarDatosMeteorologicos() {
         Request request = new Request.Builder().url(WEATHER_URL).build();
@@ -74,19 +89,16 @@ public class MainActivity extends AppCompatActivity {
                 if (!response.isSuccessful()) return;
                 try {
                     String jsonResponse = response.body().string();
-                    JSONObject root = new JSONObject(jsonResponse);
-                    JSONObject obs = root.getJSONArray("observations").getJSONObject(0);
+                    JSONObject root   = new JSONObject(jsonResponse);
+                    JSONObject obs    = root.getJSONArray("observations").getJSONObject(0);
                     JSONObject metric = obs.getJSONObject("metric");
 
                     String temp = metric.getString("temp");
-                    String hum = obs.getString("humidity");
+                    String hum  = obs.getString("humidity");
 
                     runOnUiThread(() -> {
                         tvTemperatura.setText(temp + "°C");
                         tvHumedadHeader.setText(hum + "%");
-                        int valHum = (int) Double.parseDouble(hum);
-                        progressBarHumedad.setProgress(valHum);
-                        tvPorcentajeCentral.setText(valHum + "%");
                     });
                 } catch (Exception e) {
                     Log.e("API", "Error al procesar JSON", e);
@@ -95,28 +107,70 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // Reservas → card azul (progressBar + tvPorcentajeCentral)
+    // ══════════════════════════════════════════════════════════════
+
+    private void cargarProgresoReservas() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
+        new ReservasManager().calcularProgreso(user.getUid(), new ReservasManager.ProgresoCallback() {
+            @Override
+            public void onProgreso(int porcentaje, int completadas, int total) {
+                progressBar.setProgress(porcentaje);
+                tvPorcentajeCentral.setText(porcentaje + "%");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("Reservas", "Error al calcular progreso", e);
+            }
+        });
+    }
+
+    // Llama a esto cuando el usuario marque el Checkbox de una reserva
+    public void marcarReservaCompletada(String reservaId, String claseId) {
+        new ReservasManager().marcarComoCompletada(reservaId, claseId, new ReservasManager.OperacionCallback() {
+            @Override
+            public void onExito() {
+                Toast.makeText(MainActivity.this, "✅ Clase completada", Toast.LENGTH_SHORT).show();
+                cargarProgresoReservas();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(MainActivity.this, "⚠️ " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Firebase → nombre usuario
+    // ══════════════════════════════════════════════════════════════
+
     private void obtenerDatosUsuarioFirebase() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             db.collection("users").document(user.getUid()).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
-                            String nombre = doc.getString("name");
-                            tvNombreUsuario.setText(nombre);
+                            tvNombreUsuario.setText(doc.getString("name"));
                         }
                     })
                     .addOnFailureListener(e -> Log.e("Firestore", "Error al leer usuario", e));
         }
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // Navegación y botones (sin cambios)
+    // ══════════════════════════════════════════════════════════════
 
-   void configurarNavegacion() {
-
+    void configurarNavegacion() {
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_inicio) {
                 return true;
             } else if (id == R.id.nav_perfil) {
@@ -131,40 +185,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, CalendarioActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
-            }else if (id == R.id.nav_chat) {
-           startActivity(new Intent(this, Chat.class));
-           overridePendingTransition(0, 0);
-           return true;
-       }
-
+            } else if (id == R.id.nav_chat) {
+                startActivity(new Intent(this, Chat.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }
             return false;
         });
     }
 
     private void configurarBotonesAccion() {
+        findViewById(R.id.btnDetalles).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, DetallesActivity.class)));
 
-        findViewById(R.id.btnDetalles).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DetallesActivity.class);
-            startActivity(intent);
-        });
+        findViewById(R.id.btnVerCalendario).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
 
+        findViewById(R.id.cardRutina).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, RutinaActivity.class)));
 
-        findViewById(R.id.btnVerCalendario).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CalendarioActivity.class);
-            startActivity(intent);
-        });
+        findViewById(R.id.cardReservar).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
 
-        findViewById(R.id.cardRutina).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RutinaActivity.class);
-            startActivity(intent);
-        });
-
-        findViewById(R.id.cardReservar).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CalendarioActivity.class);
-            startActivity(intent);
-        });
-
-        //TODO
         findViewById(R.id.fab).setOnClickListener(v ->
                 Toast.makeText(this, "Asistente SportHub activado", Toast.LENGTH_SHORT).show());
     }

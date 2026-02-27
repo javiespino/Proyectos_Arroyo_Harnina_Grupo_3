@@ -164,10 +164,13 @@
                             android:layout_marginStart="16dp"
                             android:text="Notificaciones"
                             android:textColor="@color/gym_blue" />
+
                         <com.google.android.material.switchmaterial.SwitchMaterial
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="true"/>
+                            android:backgroundTint="@color/gym_blue"
+                            android:checked="true"
+                            android:textColorLink="@color/gym_blue" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

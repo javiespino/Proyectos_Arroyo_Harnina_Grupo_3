@@ -2,133 +2,126 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gym_bg"
-    android:padding="16dp">
+    android:background="@color/gym_bg">
 
-    <LinearLayout
-        android:id="@+id/headerDetalles"
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/gym_blue"
+        app:title="Mis Reservas"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/gym_blue" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DETALLES"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:textColor="@color/gym_orange"
-                android:letterSpacing="0.1" />
-            <TextView
-                android:id="@+id/tvSemanaTitulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Semana 12"
-                android:textColor="@color/gym_blue"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
-
+    <!-- Card resumen progreso -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardWeeklyGoal"
+        android:id="@+id/cardResumen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="#F0F4F8"
-        app:layout_constraintTop_toBottomOf="@id/headerDetalles">
+        app:cardBackgroundColor="@color/gym_blue"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:padding="16dp"
-            android:orientation="vertical">
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tu progreso"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvResumenClases"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 de 0 clases completadas"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp" />
+
+                <ProgressBar
+                    android:id="@+id/progressBarDetalles"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="10dp"
+                    android:max="100"
+                    android:progressTint="@color/gym_orange"
+                    android:progressBackgroundTint="#40FFFFFF" />
+            </LinearLayout>
+
             <TextView
+                android:id="@+id/tvPorcentajeDetalles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Meta de la semana: 5 clases"
-                android:textColor="@color/gym_blue"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
-            <ProgressBar
-                android:id="@+id/pbSemanal"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:layout_marginTop="8dp"
-                android:progress="60"
-                android:progressDrawable="@drawable/custom_progress_bar_horizontal" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="¡Vas por buen camino!"
-                android:textSize="11sp"
-                android:textColor="@color/gym_gray"/>
+                android:layout_marginStart="16dp"
+                android:text="0%"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Label lista -->
     <TextView
-        android:id="@+id/labelProximas"
+        android:id="@+id/labelReservas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Próximas en Semana 12"
-        android:textColor="@color/gym_blue"
+        android:text="Todas mis reservas"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/cardWeeklyGoal"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvReservadasSemana"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintTop_toBottomOf="@id/labelProximas"
-        tools:listitem="@layout/item_clase_reservada" />
-
-    <TextView
-        android:id="@+id/labelCompletadasSemana"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:textColor="@color/gym_blue"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Completadas esta semana"
-        android:textColor="@color/gym_blue"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/rvReservadasSemana"
+        app:layout_constraintTop_toBottomOf="@id/cardResumen"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Estado vacío -->
+    <TextView
+        android:id="@+id/tvVacio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No tienes reservas aún.\nHaz una reserva desde el calendario."
+        android:textSize="14sp"
+        android:textColor="@color/gym_gray"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/labelReservas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Lista reservas -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCompletadasSemana"
+        android:id="@+id/recyclerReservas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/labelCompletadasSemana"
-        tools:listitem="@layout/item_clase_completada" />
+        android:paddingBottom="16dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/labelReservas"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

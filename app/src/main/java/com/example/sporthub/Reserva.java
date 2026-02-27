@@ -1,84 +1,38 @@
 package com.example.sporthub;
 
 public class Reserva {
-    private String nombreActividad;
-    private String fecha;
-    private String hora;
-    private String nombreUsuario;
-    private int plazasDisponibles;
-    private int plazasTotales;
 
-    // Constructor vacío
-    public Reserva() {
-        this.plazasTotales = 20; // Capacidad por defecto
-    }
+    private String id;               // ID del documento en Firestore
+    private String claseId;          // ID de la clase (doc en colección `clases`)
+    private String usuarioId;        // UID de Firebase Auth
+    private String nombreActividad;  // Nombre de la actividad (Zumba, Yoga...)
+    private boolean completada;      // true si el usuario ya asistió
+
+    // Constructor vacío obligatorio para Firestore
+    public Reserva() {}
 
     // Constructor completo
-    public Reserva(String nombreActividad, String fecha, String hora, String nombreUsuario, int plazasDisponibles) {
+    public Reserva(String claseId, String usuarioId, String nombreActividad) {
+        this.claseId = claseId;
+        this.usuarioId = usuarioId;
         this.nombreActividad = nombreActividad;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.nombreUsuario = nombreUsuario;
-        this.plazasDisponibles = plazasDisponibles;
-        this.plazasTotales = 20;
+        this.completada = false;
     }
 
-    // Getters y Setters
-    public String getNombreActividad() {
-        return nombreActividad;
-    }
+    // ── Getters y Setters ──────────────────────────────────────────
 
-    public void setNombreActividad(String nombreActividad) {
-        this.nombreActividad = nombreActividad;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getFecha() {
-        return fecha;
-    }
+    public String getClaseId() { return claseId; }
+    public void setClaseId(String claseId) { this.claseId = claseId; }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
+    public String getUsuarioId() { return usuarioId; }
+    public void setUsuarioId(String usuarioId) { this.usuarioId = usuarioId; }
 
-    public String getHora() {
-        return hora;
-    }
+    public String getNombreActividad() { return nombreActividad; }
+    public void setNombreActividad(String nombreActividad) { this.nombreActividad = nombreActividad; }
 
-    public void setHora(String hora) {
-        this.hora = hora;
-    }
-
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
-    public int getPlazasDisponibles() {
-        return plazasDisponibles;
-    }
-
-    public void setPlazasDisponibles(int plazasDisponibles) {
-        this.plazasDisponibles = plazasDisponibles;
-    }
-
-    public int getPlazasTotales() {
-        return plazasTotales;
-    }
-
-    public void setPlazasTotales(int plazasTotales) {
-        this.plazasTotales = plazasTotales;
-    }
-
-    public boolean hayPlazasDisponibles() {
-        return plazasDisponibles > 0;
-    }
-
-    @Override
-    public String toString() {
-        return nombreActividad + " - " + fecha + " a las " + hora +
-                " (Plazas: " + plazasDisponibles + "/" + plazasTotales + ")";
-    }
+    public boolean isCompletada() { return completada; }
+    public void setCompletada(boolean completada) { this.completada = completada; }
 }
