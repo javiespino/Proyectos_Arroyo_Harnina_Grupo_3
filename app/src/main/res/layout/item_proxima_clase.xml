@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Icono -->
+        <ImageView
+            android:id="@+id/imgActividadProxima"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:src="@drawable/reserva"
+            android:padding="8dp"
+            android:background="@drawable/bg_circle_blue_light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Nombre actividad -->
+        <TextView
+            android:id="@+id/tvNombreActividadProxima"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Pilates"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="@color/gym_blue"
+            app:layout_constraintStart_toEndOf="@id/imgActividadProxima"
+            app:layout_constraintTop_toTopOf="@id/imgActividadProxima"
+            app:layout_constraintEnd_toStartOf="@id/tvHoraProxima" />
+
+        <!-- Fecha -->
+        <TextView
+            android:id="@+id/tvFechaProxima"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="📅 28/02/2026"
+            android:textSize="12sp"
+            android:textColor="@color/gym_gray"
+            app:layout_constraintStart_toEndOf="@id/imgActividadProxima"
+            app:layout_constraintTop_toBottomOf="@id/tvNombreActividadProxima"
+            app:layout_constraintEnd_toStartOf="@id/tvHoraProxima" />
+
+        <!-- Hora (chip derecha) -->
+        <TextView
+            android:id="@+id/tvHoraProxima"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12:00"
+            android:background="@drawable/bg_chip_green"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textColor="#2E7D32"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

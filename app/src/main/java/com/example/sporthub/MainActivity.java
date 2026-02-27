@@ -14,15 +14,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -32,7 +40,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Header: temperatura y humedad (sensores físicos)
+    // Header: temperatura y humedad
     private TextView tvTemperatura, tvHumedadHeader;
 
     // Card azul: progreso de reservas completadas
@@ -41,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvNombreUsuario;
     private BottomNavigationView bottomNavigationView;
+
+    // Próximas clases
+    private RecyclerView recyclerProximasClases;
+    private TextView tvSinClases;
+    private ProximasClasesAdapter proximasAdapter;
+    private List<Reserva> proximasList = new ArrayList<>();
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -62,16 +76,19 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Header (sensores)
         tvTemperatura   = findViewById(R.id.tvClima);
         tvHumedadHeader = findViewById(R.id.tvHumedadHeader);
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
-
-        // Card azul (reservas)
         progressBar         = findViewById(R.id.progressBar);
         tvPorcentajeCentral = findViewById(R.id.tvPorcentajeCentral);
-
         bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+        // Próximas clases
+        recyclerProximasClases = findViewById(R.id.recyclerProximasClases);
+        tvSinClases = findViewById(R.id.tvSinClases);
+        proximasAdapter = new ProximasClasesAdapter(proximasList);
+        recyclerProximasClases.setLayoutManager(new LinearLayoutManager(this));
+        recyclerProximasClases.setAdapter(proximasAdapter);
 
         // Chat flotante
         chatContainer = findViewById(R.id.chatContainer);
@@ -84,17 +101,92 @@ public class MainActivity extends AppCompatActivity {
         configurarBotonesAccion();
         configurarChat();
 
-        cargarDatosMeteorologicos();    // → tvClima + tvHumedadHeader (header)
-        obtenerDatosUsuarioFirebase();  // → tvNombreUsuario
-        cargarProgresoReservas();       // → progressBar + tvPorcentajeCentral (card azul)
+        cargarDatosMeteorologicos();
+        obtenerDatosUsuarioFirebase();
+        cargarProgresoReservas();
+        cargarProximasClases();
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Chat flotante (FAB)
+    // Próximas clases desde Firestore
+    // ══════════════════════════════════════════════════════════════
+
+    private void cargarProximasClases() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
+        // Fecha de hoy en formato dd-MM-yyyy para comparar con claseId
+        String hoy = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+
+        db.collection("reservas")
+                .whereEqualTo("usuarioId", user.getUid())
+                .whereEqualTo("completada", false)
+                .get()
+                .addOnSuccessListener(query -> {
+                    List<Reserva> futuras = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : query) {
+                        String claseId = doc.getString("claseId");
+                        String nombreActividad = doc.getString("nombreActividad");
+
+                        if (claseId == null) continue;
+
+                        // Extraer fecha del claseId: "Pilates_28-02-2026_12:00"
+                        String[] partes = claseId.split("_");
+                        if (partes.length >= 2) {
+                            String fechaClase = partes[1]; // "28-02-2026"
+                            // Solo mostrar clases de hoy en adelante
+                            if (esFechaFuturaOHoy(fechaClase, hoy)) {
+                                Reserva r = new Reserva();
+                                r.setClaseId(claseId);
+                                r.setNombreActividad(nombreActividad);
+                                futuras.add(r);
+                            }
+                        }
+                    }
+
+                    // Ordenar por fecha (claseId contiene fecha en posición 1)
+                    futuras.sort((a, b) -> {
+                        String fa = a.getClaseId() != null ? a.getClaseId() : "";
+                        String fb = b.getClaseId() != null ? b.getClaseId() : "";
+                        return fa.compareTo(fb);
+                    });
+
+                    // Máximo 3
+                    List<Reserva> top3 = futuras.size() > 3 ? futuras.subList(0, 3) : futuras;
+
+                    proximasAdapter.actualizar(new ArrayList<>(top3));
+
+                    if (top3.isEmpty()) {
+                        tvSinClases.setVisibility(View.VISIBLE);
+                        recyclerProximasClases.setVisibility(View.GONE);
+                    } else {
+                        tvSinClases.setVisibility(View.GONE);
+                        recyclerProximasClases.setVisibility(View.VISIBLE);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar próximas clases", e));
+    }
+
+    /**
+     * Compara dos fechas en formato "dd-MM-yyyy".
+     * Devuelve true si fechaClase >= hoy.
+     */
+    private boolean esFechaFuturaOHoy(String fechaClase, String hoy) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            Date dClase = sdf.parse(fechaClase);
+            Date dHoy   = sdf.parse(hoy);
+            return dClase != null && !dClase.before(dHoy);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Chat flotante
     // ══════════════════════════════════════════════════════════════
 
     private void configurarChat() {
-        // Mostrar/ocultar el panel de chat al pulsar el FAB
         findViewById(R.id.fab).setOnClickListener(v -> {
             if (chatContainer.getVisibility() == View.GONE) {
                 chatContainer.setVisibility(View.VISIBLE);
@@ -103,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Botón enviar mensaje al webhook
         btnSend.setOnClickListener(v -> {
             String message = editMessage.getText().toString().trim();
             if (!message.isEmpty()) {
@@ -115,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendMessageToWebhook(String message) {
         String WEBHOOK_URL = "https://hook.eu1.make.com/q7n6l956tkrhen73sk874pf6mmyyb4dt";
-
         OkHttpClient client = new OkHttpClient();
         JSONObject jsonBody = new JSONObject();
         try {
@@ -125,23 +215,16 @@ public class MainActivity extends AppCompatActivity {
             txtResponse.setText("Error creando JSON");
             return;
         }
-
         okhttp3.RequestBody body = okhttp3.RequestBody.create(
                 jsonBody.toString(),
                 okhttp3.MediaType.parse("application/json; charset=utf-8")
         );
-
-        Request request = new Request.Builder()
-                .url(WEBHOOK_URL)
-                .post(body)
-                .build();
-
+        Request request = new Request.Builder().url(WEBHOOK_URL).post(body).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> txtResponse.setText("Error: " + e.getMessage()));
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String res = response.body() != null ? response.body().string() : "Sin respuesta";
@@ -149,12 +232,8 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONObject json = new JSONObject(res);
                         String chatbotResponse = json.optString("message");
-                        if (chatbotResponse.isEmpty()) {
-                            chatbotResponse = res;
-                        }
-                        txtResponse.setText(chatbotResponse);
+                        txtResponse.setText(chatbotResponse.isEmpty() ? res : chatbotResponse);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         txtResponse.setText(res);
                     }
                 });
@@ -163,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Meteorología → header (tvClima + tvHumedadHeader)
+    // Meteorología
     // ══════════════════════════════════════════════════════════════
 
     private void cargarDatosMeteorologicos() {
@@ -173,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.e("API", "Error de red", e);
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) return;
@@ -182,10 +260,8 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject root   = new JSONObject(jsonResponse);
                     JSONObject obs    = root.getJSONArray("observations").getJSONObject(0);
                     JSONObject metric = obs.getJSONObject("metric");
-
                     String temp = metric.getString("temp");
                     String hum  = obs.getString("humidity");
-
                     runOnUiThread(() -> {
                         tvTemperatura.setText(temp + "°C");
                         tvHumedadHeader.setText(hum + "%");
@@ -198,20 +274,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Reservas → card azul (progressBar + tvPorcentajeCentral)
+    // Progreso reservas
     // ══════════════════════════════════════════════════════════════
 
     private void cargarProgresoReservas() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) return;
-
         new ReservasManager().calcularProgreso(user.getUid(), new ReservasManager.ProgresoCallback() {
             @Override
             public void onProgreso(int porcentaje, int completadas, int total) {
                 progressBar.setProgress(porcentaje);
                 tvPorcentajeCentral.setText(porcentaje + "%");
             }
-
             @Override
             public void onError(Exception e) {
                 Log.e("Reservas", "Error al calcular progreso", e);
@@ -226,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "✅ Clase completada", Toast.LENGTH_SHORT).show();
                 cargarProgresoReservas();
             }
-
             @Override
             public void onError(Exception e) {
                 Toast.makeText(MainActivity.this, "⚠️ " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -235,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Firebase → nombre usuario
+    // Firebase usuario
     // ══════════════════════════════════════════════════════════════
 
     private void obtenerDatosUsuarioFirebase() {
@@ -243,28 +316,23 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             db.collection("users").document(user.getUid()).get()
                     .addOnSuccessListener(doc -> {
-                        if (doc.exists()) {
-                            tvNombreUsuario.setText(doc.getString("name"));
-                        }
+                        if (doc.exists()) tvNombreUsuario.setText(doc.getString("name"));
                     })
                     .addOnFailureListener(e -> Log.e("Firestore", "Error al leer usuario", e));
         }
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Botones de acción (cards del main)
+    // Botones de acción
     // ══════════════════════════════════════════════════════════════
 
     private void configurarBotonesAccion() {
         findViewById(R.id.btnDetalles).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, DetallesActivity.class)));
-
         findViewById(R.id.btnVerCalendario).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
-
         findViewById(R.id.cardRutina).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, RutinaActivity.class)));
-
         findViewById(R.id.cardReservar).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
     }
@@ -275,7 +343,6 @@ public class MainActivity extends AppCompatActivity {
 
     void configurarNavegacion() {
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
-
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_inicio) {

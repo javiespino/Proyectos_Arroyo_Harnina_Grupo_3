@@ -41,6 +41,14 @@
                 android:textColor="@color/gym_orange"
                 android:textStyle="bold"
                 android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/tvEstadoAbono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sin abono activo"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E"
+                android:layout_marginTop="2dp"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -56,6 +64,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- SECCIÓN CUENTA -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <!-- Editar datos -->
                     <LinearLayout
                         android:id="@+id/optionEditProfile"
                         android:layout_width="match_parent"
@@ -103,11 +113,14 @@
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F1F1"/>
 
+                    <!-- Suscripción -->
                     <LinearLayout
                         android:id="@+id/optionSubscription"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:gravity="center_vertical"
                         android:paddingHorizontal="16dp">
                         <ImageView
@@ -123,9 +136,37 @@
                             android:text="Mi suscripción y pagos"
                             android:textColor="@color/gym_blue" />
                     </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F1F1"/>
+
+                    <!-- Lesiones -->
+                    <LinearLayout
+                        android:id="@+id/optionLesiones"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/profile"
+                            app:tint="#F44336" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="Mis lesiones y restricciones"
+                            android:textColor="@color/gym_blue" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- SECCIÓN AJUSTES -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -164,13 +205,11 @@
                             android:layout_marginStart="16dp"
                             android:text="Notificaciones"
                             android:textColor="@color/gym_blue" />
-
                         <com.google.android.material.switchmaterial.SwitchMaterial
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="@color/gym_blue"
-                            android:checked="true"
-                            android:textColorLink="@color/gym_blue" />
+                            android:checked="true" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

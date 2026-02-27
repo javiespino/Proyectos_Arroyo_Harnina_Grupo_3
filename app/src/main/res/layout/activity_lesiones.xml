@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gym_bg">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/headerLesiones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBackLesiones"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/gym_blue" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Mis Lesiones"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/gym_blue" />
+    </LinearLayout>
+
+    <!-- Chips de filtro -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupFiltro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        app:singleSelection="true"
+        app:layout_constraintTop_toBottomOf="@id/headerLesiones">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipTodas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todas"
+            android:checkable="true"
+            android:checked="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipActivas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activas"
+            android:checkable="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipRecuperadas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recuperadas"
+            android:checkable="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Lista vacía -->
+    <TextView
+        android:id="@+id/tvSinLesiones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No hay lesiones registradas"
+        android:textColor="@color/gym_gray"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltro"
+        app:layout_constraintBottom_toTopOf="@id/btnAnadirLesion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerLesiones"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltro"
+        app:layout_constraintBottom_toTopOf="@id/btnAnadirLesion" />
+
+    <!-- Botón añadir -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAnadirLesion"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="+ Añadir Lesión"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/gym_blue"
+        app:cornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
