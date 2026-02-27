@@ -3,6 +3,10 @@ package com.example.sporthub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
     private final String WEATHER_URL = "https://api.weather.com/v2/pws/observations/current?stationId=IALMEN70&format=json&units=m&apiKey=908477f6f2b84c6c8477f6f2b80c6c03";
     private OkHttpClient cliente = new OkHttpClient();
 
+    // Chat flotante
+    private FrameLayout chatContainer;
+    private EditText editMessage;
+    private TextView txtResponse;
+    private Button btnSend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,13 +73,93 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
+        // Chat flotante
+        chatContainer = findViewById(R.id.chatContainer);
+        editMessage   = findViewById(R.id.editMessage);
+        txtResponse   = findViewById(R.id.txtResponse);
+        btnSend       = findViewById(R.id.btnSend);
+
         configurarMargenes();
         configurarNavegacion();
         configurarBotonesAccion();
+        configurarChat();
 
         cargarDatosMeteorologicos();    // → tvClima + tvHumedadHeader (header)
         obtenerDatosUsuarioFirebase();  // → tvNombreUsuario
         cargarProgresoReservas();       // → progressBar + tvPorcentajeCentral (card azul)
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Chat flotante (FAB)
+    // ══════════════════════════════════════════════════════════════
+
+    private void configurarChat() {
+        // Mostrar/ocultar el panel de chat al pulsar el FAB
+        findViewById(R.id.fab).setOnClickListener(v -> {
+            if (chatContainer.getVisibility() == View.GONE) {
+                chatContainer.setVisibility(View.VISIBLE);
+            } else {
+                chatContainer.setVisibility(View.GONE);
+            }
+        });
+
+        // Botón enviar mensaje al webhook
+        btnSend.setOnClickListener(v -> {
+            String message = editMessage.getText().toString().trim();
+            if (!message.isEmpty()) {
+                sendMessageToWebhook(message);
+                editMessage.setText("");
+            }
+        });
+    }
+
+    private void sendMessageToWebhook(String message) {
+        String WEBHOOK_URL = "https://hook.eu1.make.com/q7n6l956tkrhen73sk874pf6mmyyb4dt";
+
+        OkHttpClient client = new OkHttpClient();
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("message", message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            txtResponse.setText("Error creando JSON");
+            return;
+        }
+
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                jsonBody.toString(),
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url(WEBHOOK_URL)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> txtResponse.setText("Error: " + e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String res = response.body() != null ? response.body().string() : "Sin respuesta";
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject json = new JSONObject(res);
+                        String chatbotResponse = json.optString("message");
+                        if (chatbotResponse.isEmpty()) {
+                            chatbotResponse = res;
+                        }
+                        txtResponse.setText(chatbotResponse);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        txtResponse.setText(res);
+                    }
+                });
+            }
+        });
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -129,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Llama a esto cuando el usuario marque el Checkbox de una reserva
     public void marcarReservaCompletada(String reservaId, String claseId) {
         new ReservasManager().marcarComoCompletada(reservaId, claseId, new ReservasManager.OperacionCallback() {
             @Override
@@ -163,7 +252,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Navegación y botones (sin cambios)
+    // Botones de acción (cards del main)
+    // ══════════════════════════════════════════════════════════════
+
+    private void configurarBotonesAccion() {
+        findViewById(R.id.btnDetalles).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, DetallesActivity.class)));
+
+        findViewById(R.id.btnVerCalendario).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
+
+        findViewById(R.id.cardRutina).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, RutinaActivity.class)));
+
+        findViewById(R.id.cardReservar).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Navegación y márgenes
     // ══════════════════════════════════════════════════════════════
 
     void configurarNavegacion() {
@@ -192,23 +299,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
-    }
-
-    private void configurarBotonesAccion() {
-        findViewById(R.id.btnDetalles).setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, DetallesActivity.class)));
-
-        findViewById(R.id.btnVerCalendario).setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
-
-        findViewById(R.id.cardRutina).setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, RutinaActivity.class)));
-
-        findViewById(R.id.cardReservar).setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
-
-        findViewById(R.id.fab).setOnClickListener(v ->
-                Toast.makeText(this, "Asistente SportHub activado", Toast.LENGTH_SHORT).show());
     }
 
     private void configurarMargenes() {

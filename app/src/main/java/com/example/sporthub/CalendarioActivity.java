@@ -418,4 +418,9 @@ public class CalendarioActivity extends AppCompatActivity implements HorariosAda
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         return sdf.format(new Date());
     }
+
+    @Override
+    public void onHorarioClick(Reserva reserva, int position) {
+
+    }
 }

@@ -74,6 +74,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation(libs.firebase.auth)
     implementation(libs.activity)
+    implementation(libs.volley)
 
     // Testing
     testImplementation("junit:junit:4.13.2")
