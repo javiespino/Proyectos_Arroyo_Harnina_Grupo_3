@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -31,8 +32,14 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView tvTemperatura, tvHumedadHeader, tvPorcentajeCentral, tvNombreUsuario;
-    private ProgressBar progressBarHumedad;
+    // Header: temperatura y humedad (sensores físicos)
+    private TextView tvTemperatura, tvHumedadHeader;
+
+    // Card azul: progreso de reservas completadas
+    private ProgressBar progressBar;
+    private TextView tvPorcentajeCentral;
+
+    private TextView tvNombreUsuario;
     private BottomNavigationView bottomNavigationView;
 
     private FirebaseAuth mAuth;
@@ -41,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private final String WEATHER_URL = "https://api.weather.com/v2/pws/observations/current?stationId=IALMEN70&format=json&units=m&apiKey=908477f6f2b84c6c8477f6f2b80c6c03";
     private OkHttpClient cliente = new OkHttpClient();
 
-    // --- Chat flotante ---
+    // Chat flotante
     private FrameLayout chatContainer;
     private EditText editMessage;
     private TextView txtResponse;
@@ -55,20 +62,39 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        tvTemperatura = findViewById(R.id.tvClima);
+        // Header (sensores)
+        tvTemperatura   = findViewById(R.id.tvClima);
         tvHumedadHeader = findViewById(R.id.tvHumedadHeader);
-        tvPorcentajeCentral = findViewById(R.id.tvPorcentajeCentral);
-        progressBarHumedad = findViewById(R.id.progressBar);
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
+
+        // Card azul (reservas)
+        progressBar         = findViewById(R.id.progressBar);
+        tvPorcentajeCentral = findViewById(R.id.tvPorcentajeCentral);
+
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // --- Inicializar chat flotante ---
+        // Chat flotante
         chatContainer = findViewById(R.id.chatContainer);
-        editMessage = findViewById(R.id.editMessage);
-        txtResponse = findViewById(R.id.txtResponse);
-        btnSend = findViewById(R.id.btnSend);
+        editMessage   = findViewById(R.id.editMessage);
+        txtResponse   = findViewById(R.id.txtResponse);
+        btnSend       = findViewById(R.id.btnSend);
 
-        // Mostrar/ocultar chat al tocar el FAB
+        configurarMargenes();
+        configurarNavegacion();
+        configurarBotonesAccion();
+        configurarChat();
+
+        cargarDatosMeteorologicos();    // → tvClima + tvHumedadHeader (header)
+        obtenerDatosUsuarioFirebase();  // → tvNombreUsuario
+        cargarProgresoReservas();       // → progressBar + tvPorcentajeCentral (card azul)
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Chat flotante (FAB)
+    // ══════════════════════════════════════════════════════════════
+
+    private void configurarChat() {
+        // Mostrar/ocultar el panel de chat al pulsar el FAB
         findViewById(R.id.fab).setOnClickListener(v -> {
             if (chatContainer.getVisibility() == View.GONE) {
                 chatContainer.setVisibility(View.VISIBLE);
@@ -77,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Botón enviar mensaje
+        // Botón enviar mensaje al webhook
         btnSend.setOnClickListener(v -> {
             String message = editMessage.getText().toString().trim();
             if (!message.isEmpty()) {
@@ -85,15 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 editMessage.setText("");
             }
         });
-
-        configurarMargenes();
-        configurarNavegacion();
-
-        cargarDatosMeteorologicos();
-        obtenerDatosUsuarioFirebase();
     }
 
-    // --- Función para enviar mensaje al webhook de Make/OpenAI ---
     private void sendMessageToWebhook(String message) {
         String WEBHOOK_URL = "https://hook.eu1.make.com/q7n6l956tkrhen73sk874pf6mmyyb4dt";
 
@@ -108,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         okhttp3.RequestBody body = okhttp3.RequestBody.create(
-                jsonBody.toString(), okhttp3.MediaType.parse("application/json; charset=utf-8")
+                jsonBody.toString(),
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
         );
 
         Request request = new Request.Builder()
@@ -125,31 +145,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String res = response.body() != null ? response.body().string() : "Sin respuesta";
-
                 runOnUiThread(() -> {
                     try {
-                        // Parseamos el JSON que nos devuelve Make
                         JSONObject json = new JSONObject(res);
-
-                        // Extraemos el texto del chatbot (según el path de tu webhook)
-                        String chatbotResponse = json.optString("message"); // Si tu webhook devuelve {"message":"texto"}
-
-                        // Si tu webhook devuelve solo texto plano, usa directamente 'res'
-                        if(chatbotResponse.isEmpty()) {
+                        String chatbotResponse = json.optString("message");
+                        if (chatbotResponse.isEmpty()) {
                             chatbotResponse = res;
                         }
-
                         txtResponse.setText(chatbotResponse);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        txtResponse.setText(res); // fallback en caso de error
+                        txtResponse.setText(res);
                     }
                 });
             }
         });
     }
 
-    // --- Funciones existentes ---
+    // ══════════════════════════════════════════════════════════════
+    // Meteorología → header (tvClima + tvHumedadHeader)
+    // ══════════════════════════════════════════════════════════════
+
     private void cargarDatosMeteorologicos() {
         Request request = new Request.Builder().url(WEATHER_URL).build();
         cliente.newCall(request).enqueue(new Callback() {
@@ -163,26 +179,16 @@ public class MainActivity extends AppCompatActivity {
                 if (!response.isSuccessful()) return;
                 try {
                     String jsonResponse = response.body().string();
-                    JSONObject root = new JSONObject(jsonResponse);
-                    JSONObject obs = root.getJSONArray("observations").getJSONObject(0);
+                    JSONObject root   = new JSONObject(jsonResponse);
+                    JSONObject obs    = root.getJSONArray("observations").getJSONObject(0);
                     JSONObject metric = obs.getJSONObject("metric");
 
                     String temp = metric.getString("temp");
-                    String hum = obs.getString("humidity");
+                    String hum  = obs.getString("humidity");
 
                     runOnUiThread(() -> {
                         tvTemperatura.setText(temp + "°C");
                         tvHumedadHeader.setText(hum + "%");
-                        int valHum;
-
-                        try {
-                            valHum = (int) Double.parseDouble(hum);
-                        } catch (Exception e) {
-                            valHum = 0;
-                        }
-
-                        progressBarHumedad.setProgress(valHum);
-                        tvPorcentajeCentral.setText(valHum + "%");
                     });
                 } catch (Exception e) {
                     Log.e("API", "Error al procesar JSON", e);
@@ -191,26 +197,87 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // Reservas → card azul (progressBar + tvPorcentajeCentral)
+    // ══════════════════════════════════════════════════════════════
+
+    private void cargarProgresoReservas() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
+        new ReservasManager().calcularProgreso(user.getUid(), new ReservasManager.ProgresoCallback() {
+            @Override
+            public void onProgreso(int porcentaje, int completadas, int total) {
+                progressBar.setProgress(porcentaje);
+                tvPorcentajeCentral.setText(porcentaje + "%");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("Reservas", "Error al calcular progreso", e);
+            }
+        });
+    }
+
+    public void marcarReservaCompletada(String reservaId, String claseId) {
+        new ReservasManager().marcarComoCompletada(reservaId, claseId, new ReservasManager.OperacionCallback() {
+            @Override
+            public void onExito() {
+                Toast.makeText(MainActivity.this, "✅ Clase completada", Toast.LENGTH_SHORT).show();
+                cargarProgresoReservas();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(MainActivity.this, "⚠️ " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Firebase → nombre usuario
+    // ══════════════════════════════════════════════════════════════
+
     private void obtenerDatosUsuarioFirebase() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             db.collection("users").document(user.getUid()).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
-                            String nombre = doc.getString("name");
-                            tvNombreUsuario.setText(nombre);
+                            tvNombreUsuario.setText(doc.getString("name"));
                         }
                     })
                     .addOnFailureListener(e -> Log.e("Firestore", "Error al leer usuario", e));
         }
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // Botones de acción (cards del main)
+    // ══════════════════════════════════════════════════════════════
+
+    private void configurarBotonesAccion() {
+        findViewById(R.id.btnDetalles).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, DetallesActivity.class)));
+
+        findViewById(R.id.btnVerCalendario).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
+
+        findViewById(R.id.cardRutina).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, RutinaActivity.class)));
+
+        findViewById(R.id.cardReservar).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Navegación y márgenes
+    // ══════════════════════════════════════════════════════════════
+
     void configurarNavegacion() {
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_inicio) {
                 return true;
             } else if (id == R.id.nav_perfil) {
@@ -225,8 +292,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, CalendarioActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
+            } else if (id == R.id.nav_chat) {
+                startActivity(new Intent(this, Chat.class));
+                overridePendingTransition(0, 0);
+                return true;
             }
-            // Eliminamos nav_chat que abría otra activity
             return false;
         });
     }
