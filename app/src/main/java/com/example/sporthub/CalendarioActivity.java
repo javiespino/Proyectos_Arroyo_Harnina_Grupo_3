@@ -177,10 +177,7 @@ public class CalendarioActivity extends AppCompatActivity implements HorariosAda
         if (actividadSeleccionada.isEmpty() || fechaSeleccionada.isEmpty()) return;
 
         String fechaGuion = fechaSeleccionada.replace("/", "-");
-
-        List<String> horarios = new ArrayList<>();
-        List<Integer> plazas  = new ArrayList<>();
-
+        List<Reserva> resultado = new ArrayList<>();
         int[] contador = {0};
 
         for (int i = 0; i < HORAS_INICIO.length; i++) {
@@ -191,47 +188,53 @@ public class CalendarioActivity extends AppCompatActivity implements HorariosAda
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
                             Long plazasDisp = doc.getLong("plazasDisponibles");
-                            horarios.add(horaCompleta);
-                            plazas.add(plazasDisp != null ? plazasDisp.intValue() : 0);
+                            Reserva r = new Reserva(
+                                    actividadSeleccionada,
+                                    fechaSeleccionada,
+                                    horaCompleta,
+                                    docId,
+                                    plazasDisp != null ? plazasDisp.intValue() : 0
+                            );
+                            resultado.add(r);
                         }
                         contador[0]++;
                         if (contador[0] == HORAS_INICIO.length) {
-                            // Ordenar según HORAS_COMPLETAS antes de mostrar
-                            List<String> horariosOrdenados = new ArrayList<>();
-                            List<Integer> plazasOrdenadas  = new ArrayList<>();
+                            // Ordenar por hora antes de mostrar
+                            List<Reserva> ordenada = new ArrayList<>();
                             for (String horaOrden : HORAS_COMPLETAS) {
-                                int idx = horarios.indexOf(horaOrden);
-                                if (idx != -1) {
-                                    horariosOrdenados.add(horarios.get(idx));
-                                    plazasOrdenadas.add(plazas.get(idx));
+                                for (Reserva r : resultado) {
+                                    if (r.getHora().equals(horaOrden)) {
+                                        ordenada.add(r);
+                                        break;
+                                    }
                                 }
                             }
-                            horariosAdapter.actualizarHorarios(horariosOrdenados, plazasOrdenadas);
+                            horariosAdapter.actualizarLista(ordenada);
                         }
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Error al cargar horario: " + docId, e);
                         contador[0]++;
                         if (contador[0] == HORAS_INICIO.length) {
-                            List<String> horariosOrdenados = new ArrayList<>();
-                            List<Integer> plazasOrdenadas  = new ArrayList<>();
+                            List<Reserva> ordenada = new ArrayList<>();
                             for (String horaOrden : HORAS_COMPLETAS) {
-                                int idx = horarios.indexOf(horaOrden);
-                                if (idx != -1) {
-                                    horariosOrdenados.add(horarios.get(idx));
-                                    plazasOrdenadas.add(plazas.get(idx));
+                                for (Reserva r : resultado) {
+                                    if (r.getHora().equals(horaOrden)) {
+                                        ordenada.add(r);
+                                        break;
+                                    }
                                 }
                             }
-                            horariosAdapter.actualizarHorarios(horariosOrdenados, plazasOrdenadas);
+                            horariosAdapter.actualizarLista(ordenada);
                         }
                     });
         }
     }
 
     @Override
-    public void onHorarioClick(String horario, int plazas, int position) {
-        horarioSeleccionado = horario;
-        plazasDisponibles   = plazas;
+    public void onHorarioClick(Reserva reserva, int position) {
+        horarioSeleccionado = reserva.getHora();
+        plazasDisponibles   = reserva.getPlazasDisponibles();
         mostrarDetallesReserva();
         verificarDatosCompletos();
     }
@@ -419,8 +422,4 @@ public class CalendarioActivity extends AppCompatActivity implements HorariosAda
         return sdf.format(new Date());
     }
 
-    @Override
-    public void onHorarioClick(Reserva reserva, int position) {
-
-    }
 }
