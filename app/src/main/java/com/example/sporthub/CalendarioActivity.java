@@ -422,8 +422,4 @@ public class CalendarioActivity extends AppCompatActivity implements HorariosAda
         return sdf.format(new Date());
     }
 
-    @Override
-    public void onHorarioClick(Reserva reserva, int position) {
-
-    }
 }
