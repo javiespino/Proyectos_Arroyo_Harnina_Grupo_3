@@ -2,21 +2,35 @@ package com.example.sporthub;
 
 public class Reserva {
 
-    private String id;               // ID del documento en Firestore
-    private String claseId;          // ID de la clase (doc en colección `clases`)
-    private String usuarioId;        // UID de Firebase Auth
-    private String nombreActividad;  // Nombre de la actividad (Zumba, Yoga...)
-    private boolean completada;      // true si el usuario ya asistió
+    // Campos para Firestore (colección `reservas`)
+    private String id;
+    private String claseId;
+    private String usuarioId;
+    private String nombreActividad;
+    private boolean completada;
 
-    // Constructor vacío obligatorio para Firestore
-    public Reserva() {}
+    // Campos para mostrar en UI (HorariosAdapter / DetallesActivity)
+    private String fecha;
+    private String hora;
+    private int plazasDisponibles;
+    private int plazasTotales;
+    private String documentId;
 
-    // Constructor completo
-    public Reserva(String claseId, String usuarioId, String nombreActividad) {
-        this.claseId = claseId;
-        this.usuarioId = usuarioId;
-        this.nombreActividad = nombreActividad;
-        this.completada = false;
+    // Constructor vacío OBLIGATORIO para Firestore
+    public Reserva() {
+        this.plazasTotales = 20;
+    }
+
+    // Constructor para HorariosAdapter (CalendarioActivity)
+    public Reserva(String nombreActividad, String fecha, String hora,
+                   String documentId, int plazasDisponibles) {
+        this.nombreActividad   = nombreActividad;
+        this.fecha             = fecha;
+        this.hora              = hora;
+        this.documentId        = documentId;
+        this.claseId           = documentId;
+        this.plazasDisponibles = plazasDisponibles;
+        this.plazasTotales     = 20;
     }
 
     // ── Getters y Setters ──────────────────────────────────────────
@@ -35,4 +49,19 @@ public class Reserva {
 
     public boolean isCompletada() { return completada; }
     public void setCompletada(boolean completada) { this.completada = completada; }
+
+    public String getFecha() { return fecha; }
+    public void setFecha(String fecha) { this.fecha = fecha; }
+
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
+
+    public int getPlazasDisponibles() { return plazasDisponibles; }
+    public void setPlazasDisponibles(int plazasDisponibles) { this.plazasDisponibles = plazasDisponibles; }
+
+    public int getPlazasTotales() { return plazasTotales; }
+    public void setPlazasTotales(int plazasTotales) { this.plazasTotales = plazasTotales; }
+
+    public String getDocumentId() { return documentId; }
+    public void setDocumentId(String documentId) { this.documentId = documentId; }
 }
