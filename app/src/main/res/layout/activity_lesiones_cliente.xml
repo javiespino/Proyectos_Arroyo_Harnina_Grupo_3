@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gym_bg">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/headerLesionesCliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBackLesionesCliente"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/gym_blue" />
+
+        <TextView
+            android:id="@+id/tvTituloLesionesCliente"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Lesiones del cliente"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/gym_blue" />
+    </LinearLayout>
+
+    <!-- Chips filtro -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupFiltroCliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        app:singleSelection="true"
+        app:layout_constraintTop_toBottomOf="@id/headerLesionesCliente">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipClienteTodas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todas"
+            android:checkable="true"
+            android:checked="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipClienteActivas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activas"
+            android:checkable="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipClienteRecuperadas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recuperadas"
+            android:checkable="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Vacío -->
+    <TextView
+        android:id="@+id/tvSinLesionesCliente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Este cliente no tiene lesiones registradas"
+        android:textColor="@color/gym_gray"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltroCliente"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerLesionesCliente"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltroCliente"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
