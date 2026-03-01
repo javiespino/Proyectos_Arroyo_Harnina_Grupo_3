@@ -6,6 +6,7 @@ public class ClienteInfo {
     private int lesionesActivas;
     private int lesionesRecuperadas;
     private String zonasActivas;
+    private String rol; // "c" cliente, "e" entrenador, "m" moderador, "a" admin
 
     public ClienteInfo(String uid, String nombre) {
         this.uid    = uid;
@@ -13,6 +14,7 @@ public class ClienteInfo {
         this.lesionesActivas     = 0;
         this.lesionesRecuperadas = 0;
         this.zonasActivas        = "Cargando...";
+        this.rol                 = "c"; // por defecto cliente
     }
 
     public String getUid()                              { return uid; }
@@ -23,4 +25,6 @@ public class ClienteInfo {
     public void   setLesionesRecuperadas(int n)         { this.lesionesRecuperadas = n; }
     public String getZonasActivas()                     { return zonasActivas; }
     public void   setZonasActivas(String z)             { this.zonasActivas = z; }
+    public String getRol()                              { return rol; }
+    public void   setRol(String rol)                    { this.rol = rol; }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_mod_inicio"
+        android:icon="@drawable/home"
+        android:title="Inicio" />
+
+    <item
+        android:id="@+id/nav_mod_reservas"
+        android:icon="@drawable/reserva"
+        android:title="Reservas" />
+
+    <item
+        android:id="@+id/nav_mod_clientes"
+        android:icon="@drawable/pp_usuario"
+        android:title="Clientes" />
+
+    <item
+        android:id="@+id/nav_mod_chat"
+        android:icon="@drawable/chat"
+        android:title="Chat" />
+
+</menu>

@@ -132,6 +132,10 @@ public class LoginActivity extends AppCompatActivity {
                         intent = new Intent(LoginActivity.this, MainActivity.class);
                     } else if (rol.equals("e")) {
                         intent = new Intent(LoginActivity.this, MainActivityEntrenador.class);
+                    } else if (rol.equals("m")) {
+                        intent = new Intent(LoginActivity.this, MainActivityModerador.class);
+                    } else if (rol.equals("a")) {
+                        intent = new Intent(LoginActivity.this, MainActivityAdmin.class);
                     } else {
                         setLoading(false);
                         yaRedirigido = false;

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gym_bg">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/headerReservasMod"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBackReservasMod"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/gym_blue" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Gestión de Reservas"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/gym_blue" />
+
+        <!-- Contador de reservas activas -->
+        <TextView
+            android:id="@+id/tvContadorReservas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="13sp"
+            android:textColor="@color/gym_gray" />
+    </LinearLayout>
+
+    <!-- Texto informativo para el moderador -->
+    <TextView
+        android:id="@+id/tvInfoMod"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pulsa sobre una reserva para cancelarla"
+        android:textSize="12sp"
+        android:textColor="@color/gym_gray"
+        android:padding="12dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/headerReservasMod" />
+
+    <!-- ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBarReservasMod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvInfoMod"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Vacío -->
+    <TextView
+        android:id="@+id/tvVacioReservasMod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No hay reservas activas"
+        android:textColor="@color/gym_gray"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvInfoMod"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Lista -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerReservasMod"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/tvInfoMod"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services") // 🔥 necesario para Firebase
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -34,6 +34,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
     packaging {
         resources {
             excludes += setOf(
@@ -52,31 +53,22 @@ android {
 }
 
 dependencies {
-    // Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
-
-    // Firebase SDKs
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-analytics") // opcional
-    //api para temperatura y humedad
+    implementation("com.google.firebase:firebase-analytics")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.json:json:20210307")
-    // Google Calendar API
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.api-client:google-api-client-android:2.2.0")
     implementation("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0")
-
-
-    // AndroidX y Material
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.material:material:1.9.0")
     implementation(libs.firebase.auth)
     implementation(libs.activity)
     implementation(libs.volley)
-
-    // Testing
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
