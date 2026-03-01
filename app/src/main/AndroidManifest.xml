@@ -22,6 +22,12 @@
         android:theme="@style/Theme.SportHub"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ListaChatsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatEntrenador"
+            android:exported="false" />
+        <activity
             android:name=".LesionesActivity"
             android:exported="false" />
         <activity
@@ -62,6 +68,9 @@
             android:exported="false" />
         <activity
             android:name=".MainActivityEntrenador"
+            android:exported="false" />
+        <activity
+            android:name=".GestionAusenciasActivity"
             android:exported="false" />
     </application>
 

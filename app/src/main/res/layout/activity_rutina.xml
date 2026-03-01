@@ -140,16 +140,74 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- ── RF 3.10 · Filtros por grupo muscular ─────────────────── -->
+    <HorizontalScrollView
+        android:id="@+id/scrollFiltros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/cardConfig">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFiltroRutina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="4dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRutinaTodos"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Todos" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRutinaPecho"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pecho" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRutinaEspalda"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Espalda" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRutinaPierna"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pierna" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRutinaBrazo"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Brazo" />
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+    <!-- ──────────────────────────────────────────────────────────── -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerEjercicios"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
         android:paddingBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardConfig"
+        app:layout_constraintTop_toBottomOf="@id/scrollFiltros"
         tools:listitem="@android:layout/simple_list_item_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

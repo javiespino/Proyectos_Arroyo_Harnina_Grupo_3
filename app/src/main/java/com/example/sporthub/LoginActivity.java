@@ -26,6 +26,9 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    // Flag para evitar redirigir si el usuario ya está en la app
+    private boolean yaRedirigido = false;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +54,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            checkUserRole(currentUser.getUid());
+        // CORRECCIÓN: solo redirigir automáticamente si no hemos redirigido ya en esta
+        // sesión de la activity. Así evitamos el bucle infinito cuando el usuario vuelve
+        // atrás desde otra pantalla.
+        if (!yaRedirigido) {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser != null) {
+                yaRedirigido = true;
+                checkUserRole(currentUser.getUid());
+            }
         }
     }
 
@@ -73,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
+                            yaRedirigido = true;
                             checkUserRole(user.getUid());
                         } else {
                             setLoading(false);
@@ -88,12 +98,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkUserRole(String uid) {
-
         db.collection("users").document(uid).get()
                 .addOnSuccessListener(documentSnapshot -> {
 
                     if (!documentSnapshot.exists()) {
                         setLoading(false);
+                        yaRedirigido = false;
                         Toast.makeText(LoginActivity.this,
                                 "El perfil no existe en Firestore",
                                 Toast.LENGTH_SHORT).show();
@@ -105,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (rol == null) {
                         setLoading(false);
+                        yaRedirigido = false;
                         Toast.makeText(LoginActivity.this,
                                 "El campo 'rol' es null",
                                 Toast.LENGTH_SHORT).show();
@@ -123,6 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                         intent = new Intent(LoginActivity.this, MainActivityEntrenador.class);
                     } else {
                         setLoading(false);
+                        yaRedirigido = false;
                         Toast.makeText(LoginActivity.this,
                                 "Rol no reconocido: " + rol,
                                 Toast.LENGTH_SHORT).show();
@@ -134,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     setLoading(false);
+                    yaRedirigido = false;
                     Toast.makeText(LoginActivity.this,
                             "Error Firestore: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();

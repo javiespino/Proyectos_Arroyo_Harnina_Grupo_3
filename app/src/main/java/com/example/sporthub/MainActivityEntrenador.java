@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +37,15 @@ public class MainActivityEntrenador extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private final String WEATHER_URL = "https://api.weather.com/v2/pws/observations/current?stationId=IALMEN70&format=json&units=m&apiKey=908477f6f2b84c6c8477f6f2b80c6c03";
+    // ── Botones acciones rápidas ───────────────────────────────────
+    private Button btnGestionar;    // CLIENTES → (toast por ahora, sin activity de clientes)
+    private Button btnCrearEditar;  // RUTINAS  → RutinaActivity
+    private Button btnConfigurar;   // HORARIO/AUSENCIAS → GestionAusenciasActivity
+    private Button btnVerAnaliticas;// REPORTES → (toast por ahora)
+    // ──────────────────────────────────────────────────────────────
+
+    private final String WEATHER_URL =
+            "https://api.weather.com/v2/pws/observations/current?stationId=IALMEN70&format=json&units=m&apiKey=908477f6f2b84c6c8477f6f2b80c6c03";
     private OkHttpClient cliente = new OkHttpClient();
 
     @Override
@@ -46,23 +55,60 @@ public class MainActivityEntrenador extends AppCompatActivity {
         setContentView(R.layout.activity_main_entrenador);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        db    = FirebaseFirestore.getInstance();
 
-        tvTemperatura = findViewById(R.id.tvClima);
-        tvHumedadHeader = findViewById(R.id.tvHumedadHeader);
+        // Vistas cabecera
+        tvTemperatura      = findViewById(R.id.tvClima);
+        tvHumedadHeader    = findViewById(R.id.tvHumedadHeader);
         tvNombreEntrenador = findViewById(R.id.tvNombreEntrenador);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
+        // Botones acciones rápidas
+        btnGestionar     = findViewById(R.id.btnGestionar);
+        btnCrearEditar   = findViewById(R.id.btnCrearEditar);
+        btnConfigurar    = findViewById(R.id.btnConfigurar);
+        btnVerAnaliticas = findViewById(R.id.btnVerAnaliticas);
+
         configurarMargenes();
         configurarNavegacion();
-        // configurarBotonesAccion(); // Descomenta si ya tienes los IDs en tu XML actual
+        configurarAccionesRapidas();
 
         cargarDatosMeteorologicos();
         obtenerDatosUsuarioFirebase();
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // Acciones rápidas — botones del dashboard
+    // ══════════════════════════════════════════════════════════════
+
+    private void configurarAccionesRapidas() {
+
+        // CLIENTES — sin activity específica todavía
+        btnGestionar.setOnClickListener(v ->
+                Toast.makeText(this, "Gestión de clientes — próximamente", Toast.LENGTH_SHORT).show()
+        );
+
+        // RUTINAS → RutinaActivity
+        btnCrearEditar.setOnClickListener(v ->
+                startActivity(new Intent(this, RutinaActivity.class))
+        );
+
+        // MI HORARIO / AUSENCIAS → GestionAusenciasActivity
+        btnConfigurar.setOnClickListener(v ->
+                startActivity(new Intent(this, GestionAusenciasActivity.class))
+        );
+
+        // REPORTES / SEGUIMIENTO — sin activity específica todavía
+        btnVerAnaliticas.setOnClickListener(v ->
+                Toast.makeText(this, "Reportes — próximamente", Toast.LENGTH_SHORT).show()
+        );
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Navegación inferior
+    // ══════════════════════════════════════════════════════════════
+
     private void configurarNavegacion() {
-        // Asegúrate de que este ID coincida con el de tu archivo menu/bottom_nav_menu_entrenador.xml
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -71,18 +117,17 @@ public class MainActivityEntrenador extends AppCompatActivity {
             if (id == R.id.nav_home) {
                 return true;
             } else if (id == R.id.nav_clientes) {
-                // startActivity(new Intent(this, ClientesActivity.class));
+                Toast.makeText(this, "Gestión de clientes — próximamente", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (id == R.id.nav_calendario) {
                 startActivity(new Intent(this, CalendarioActivity.class));
                 return true;
             } else if (id == R.id.nav_chat) {
-                Toast.makeText(this, "Abriendo Chat...", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, ListaChatsActivity.class));
                 return true;
             } else if (id == R.id.nav_mas) {
-                // ANCLA EL MENÚ AL ICONO "MÁS"
                 showMoreMenu(findViewById(R.id.nav_mas));
-                return false; // False para que no se quede seleccionado el botón Más
+                return false;
             }
             return false;
         });
@@ -98,10 +143,13 @@ public class MainActivityEntrenador extends AppCompatActivity {
                 startActivity(new Intent(this, RutinaActivity.class));
                 return true;
             } else if (id == R.id.nav_reportes) {
-                Toast.makeText(this, "Abriendo Reportes...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Reportes — próximamente", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (id == R.id.nav_perfil) {
                 startActivity(new Intent(this, PerfilUsuario.class));
+                return true;
+            } else if (id == R.id.nav_ausencias) {
+                startActivity(new Intent(this, GestionAusenciasActivity.class));
                 return true;
             }
             return false;
@@ -109,13 +157,17 @@ public class MainActivityEntrenador extends AppCompatActivity {
         popup.show();
     }
 
-    // --- MÉTODOS DE APOYO (CLIMA Y FIREBASE) ---
+    // ══════════════════════════════════════════════════════════════
+    // Datos meteorológicos
+    // ══════════════════════════════════════════════════════════════
 
     private void cargarDatosMeteorologicos() {
         Request request = new Request.Builder().url(WEATHER_URL).build();
         cliente.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) { Log.e("API", "Error red", e); }
+            public void onFailure(Call call, IOException e) {
+                Log.e("API", "Error red", e);
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -123,18 +175,24 @@ public class MainActivityEntrenador extends AppCompatActivity {
                 try {
                     String jsonResponse = response.body().string();
                     JSONObject root = new JSONObject(jsonResponse);
-                    JSONObject obs = root.getJSONArray("observations").getJSONObject(0);
+                    JSONObject obs  = root.getJSONArray("observations").getJSONObject(0);
                     JSONObject metric = obs.getJSONObject("metric");
                     String temp = metric.getString("temp");
-                    String hum = obs.getString("humidity");
+                    String hum  = obs.getString("humidity");
                     runOnUiThread(() -> {
                         tvTemperatura.setText(temp + "°C");
                         tvHumedadHeader.setText(hum + "%");
                     });
-                } catch (Exception e) { Log.e("API", "Error JSON", e); }
+                } catch (Exception e) {
+                    Log.e("API", "Error JSON", e);
+                }
             }
         });
     }
+
+    // ══════════════════════════════════════════════════════════════
+    // Datos del usuario (nombre)
+    // ══════════════════════════════════════════════════════════════
 
     private void obtenerDatosUsuarioFirebase() {
         FirebaseUser user = mAuth.getCurrentUser();
@@ -147,6 +205,10 @@ public class MainActivityEntrenador extends AppCompatActivity {
                     });
         }
     }
+
+    // ══════════════════════════════════════════════════════════════
+    // Márgenes sistema
+    // ══════════════════════════════════════════════════════════════
 
     private void configurarMargenes() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

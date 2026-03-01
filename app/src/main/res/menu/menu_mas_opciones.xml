@@ -12,4 +12,7 @@
         android:id="@+id/nav_perfil"
         android:icon="@drawable/trainer_man_people_avatar_person_icon_224779"
         android:title="Mi Perfil" />
+    <item
+        android:id="@+id/nav_ausencias"
+        android:title="Gestión de Ausencias" />
 </menu>
