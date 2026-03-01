@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardRolUsuario"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <!-- Fila nombre + badge rol -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/pp_usuario"
+                android:background="@drawable/bg_circle_blue_light"
+                android:padding="6dp" />
+
+            <TextView
+                android:id="@+id/tvNombreRolUsuario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/gym_blue"
+                android:text="Nombre usuario" />
+
+            <!-- Badge rol actual -->
+            <TextView
+                android:id="@+id/tvRolActual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cliente"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_rounded_chip"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp" />
+        </LinearLayout>
+
+        <!-- Botones de cambio de rol -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnHacerEntrenador"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="→ Entrenador"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/gym_blue"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnHacerModerador"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="→ Moderador"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/gym_orange"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnQuitarRol"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:text="→ Cliente"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:backgroundTint="#9E9E9E"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -22,6 +22,21 @@
         android:theme="@style/Theme.SportHub"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".EvolucionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GestionRolesAdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GestionReservasModeradorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivityAdmin"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivityModerador"
+            android:exported="false" />
+        <activity
             android:name=".GestionClientesActivity"
             android:exported="false" />
         <activity

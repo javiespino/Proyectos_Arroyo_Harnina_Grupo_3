@@ -5,7 +5,6 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        // Declaramos el plugin de Google Services con versión
         id("com.google.gms.google-services") version "4.4.4"
     }
 }
@@ -15,6 +14,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 

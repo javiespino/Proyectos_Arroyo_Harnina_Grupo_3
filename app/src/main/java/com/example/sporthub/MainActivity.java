@@ -42,17 +42,12 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Header: temperatura y humedad
     private TextView tvTemperatura, tvHumedadHeader;
-
-    // Card azul: progreso de reservas completadas
     private ProgressBar progressBar;
     private TextView tvPorcentajeCentral;
-
     private TextView tvNombreUsuario;
     private BottomNavigationView bottomNavigationView;
 
-    // Próximas clases
     private RecyclerView recyclerProximasClases;
     private TextView tvSinClases;
     private ProximasClasesAdapter proximasAdapter;
@@ -64,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private final String WEATHER_URL = "https://api.weather.com/v2/pws/observations/current?stationId=IALMEN70&format=json&units=m&apiKey=908477f6f2b84c6c8477f6f2b80c6c03";
     private OkHttpClient cliente = new OkHttpClient();
 
-    // Chat flotante
     private FrameLayout chatContainer;
     private EditText editMessage;
     private TextView txtResponse;
@@ -78,21 +72,19 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        tvTemperatura   = findViewById(R.id.tvClima);
-        tvHumedadHeader = findViewById(R.id.tvHumedadHeader);
-        tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
-        progressBar         = findViewById(R.id.progressBar);
-        tvPorcentajeCentral = findViewById(R.id.tvPorcentajeCentral);
+        tvTemperatura        = findViewById(R.id.tvClima);
+        tvHumedadHeader      = findViewById(R.id.tvHumedadHeader);
+        tvNombreUsuario      = findViewById(R.id.tvNombreUsuario);
+        progressBar          = findViewById(R.id.progressBar);
+        tvPorcentajeCentral  = findViewById(R.id.tvPorcentajeCentral);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // Próximas clases
         recyclerProximasClases = findViewById(R.id.recyclerProximasClases);
         tvSinClases = findViewById(R.id.tvSinClases);
         proximasAdapter = new ProximasClasesAdapter(proximasList);
         recyclerProximasClases.setLayoutManager(new LinearLayoutManager(this));
         recyclerProximasClases.setAdapter(proximasAdapter);
 
-        // Chat flotante
         chatContainer = findViewById(R.id.chatContainer);
         editMessage   = findViewById(R.id.editMessage);
         txtResponse   = findViewById(R.id.txtResponse);
@@ -102,21 +94,17 @@ public class MainActivity extends AppCompatActivity {
         configurarNavegacion();
         configurarBotonesAccion();
         configurarChat();
-
-        // CORRECCIÓN: primero verificamos el rol antes de cargar datos.
-        // Si el usuario no es cliente (rol "c"), lo redirigimos a su pantalla correcta.
         verificarRolYCargarDatos();
     }
 
     // ══════════════════════════════════════════════════════════════
-    // CORRECCIÓN: verificar rol antes de mostrar la pantalla
+    // Verificar rol
     // ══════════════════════════════════════════════════════════════
 
     private void verificarRolYCargarDatos() {
         FirebaseUser user = mAuth.getCurrentUser();
 
         if (user == null) {
-            // Sin sesión activa → volver al login
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -133,24 +121,21 @@ public class MainActivity extends AppCompatActivity {
                     String rol = doc.getString("rol");
 
                     if ("e".equals(rol)) {
-                        // Es entrenador → redirigir a su pantalla
                         startActivity(new Intent(this, MainActivityEntrenador.class));
                         finish();
                         return;
                     }
 
-                    // Es cliente (rol "c") o cualquier otro → cargar datos normalmente
                     String name = doc.getString("name");
                     if (name != null) tvNombreUsuario.setText(name);
 
                     cargarDatosMeteorologicos();
                     cargarProgresoReservas();
                     cargarProximasClases();
-                    cargarAvisoClasesCanceladas(); // RF 3.19
+                    cargarAvisoClasesCanceladas();
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error al verificar rol", e);
-                    // Si falla Firestore cargamos igualmente para no bloquear al usuario
                     cargarDatosMeteorologicos();
                     cargarProgresoReservas();
                     cargarProximasClases();
@@ -159,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Próximas clases desde Firestore
+    // Próximas clases
     // ══════════════════════════════════════════════════════════════
 
     private void cargarProximasClases() {
@@ -177,9 +162,7 @@ public class MainActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot doc : query) {
                         String claseId = doc.getString("claseId");
                         String nombreActividad = doc.getString("nombreActividad");
-
                         if (claseId == null) continue;
-
                         String[] partes = claseId.split("_");
                         if (partes.length >= 2) {
                             String fechaClase = partes[1];
@@ -224,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // RF 3.19 — Aviso al cliente si alguna clase está cancelada
+    // RF 3.19 — Aviso clases canceladas
     // ══════════════════════════════════════════════════════════════
 
     private void cargarAvisoClasesCanceladas() {
@@ -251,7 +234,6 @@ public class MainActivity extends AppCompatActivity {
                         db.collection("clases").document(claseId).get()
                                 .addOnSuccessListener(claseDoc -> {
                                     consultadas[0]++;
-
                                     if (claseDoc.exists()) {
                                         Boolean cancelada = claseDoc.getBoolean("cancelada");
                                         if (cancelada != null && cancelada) {
@@ -259,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
                                             String fecha     = claseDoc.getString("fecha");
                                             String hora      = claseDoc.getString("hora");
                                             String sustituto = claseDoc.getString("entrenadorSustituto");
-
                                             String linea = "• " + actividad + " — " + fecha + " " + hora;
                                             if (sustituto != null && !sustituto.isEmpty()
                                                     && !"Sin sustituto".equals(sustituto)) {
@@ -270,7 +251,6 @@ public class MainActivity extends AppCompatActivity {
                                             avisos.add(linea);
                                         }
                                     }
-
                                     if (consultadas[0] == claseIds.size() && !avisos.isEmpty()) {
                                         runOnUiThread(() -> mostrarDialogoAvisosCancelaciones(avisos));
                                     }
@@ -284,9 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void mostrarDialogoAvisosCancelaciones(List<String> avisos) {
         StringBuilder sb = new StringBuilder("Las siguientes clases han sido canceladas:\n\n");
-        for (String aviso : avisos) {
-            sb.append(aviso).append("\n\n");
-        }
+        for (String aviso : avisos) sb.append(aviso).append("\n\n");
         new AlertDialog.Builder(this)
                 .setTitle("⚠️ Clases canceladas")
                 .setMessage(sb.toString().trim())
@@ -420,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Botones de acción
+    // Botones de acción ← AÑADIDA cardEvolucion
     // ══════════════════════════════════════════════════════════════
 
     private void configurarBotonesAccion() {
@@ -432,6 +410,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, RutinaActivity.class)));
         findViewById(R.id.cardReservar).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, CalendarioActivity.class)));
+        // ← NUEVO: card evolución
+        findViewById(R.id.cardEvolucion).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, EvolucionActivity.class)));
     }
 
     // ══════════════════════════════════════════════════════════════
