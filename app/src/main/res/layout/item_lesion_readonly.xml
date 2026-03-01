@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardLesionReadonly"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Fila superior: zona + estado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvZonaLesionReadonly"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Rodilla"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="@color/gym_blue" />
+
+            <TextView
+                android:id="@+id/tvEstadoLesionReadonly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● Activa"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Descripción / notas -->
+        <TextView
+            android:id="@+id/tvDescripcionLesionReadonly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sin notas"
+            android:textSize="13sp"
+            android:textColor="@color/gym_text_dark"
+            android:layout_marginTop="6dp" />
+
+        <!-- Fechas -->
+        <TextView
+            android:id="@+id/tvFechasLesionReadonly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inicio: 01/01/2026"
+            android:textSize="12sp"
+            android:textColor="@color/gym_gray"
+            android:layout_marginTop="6dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -83,9 +83,9 @@ public class MainActivityEntrenador extends AppCompatActivity {
 
     private void configurarAccionesRapidas() {
 
-        // CLIENTES — sin activity específica todavía
+        // CLIENTES → GestionClientesActivity
         btnGestionar.setOnClickListener(v ->
-                Toast.makeText(this, "Gestión de clientes — próximamente", Toast.LENGTH_SHORT).show()
+                startActivity(new Intent(this, GestionClientesActivity.class))
         );
 
         // RUTINAS → RutinaActivity
@@ -117,7 +117,7 @@ public class MainActivityEntrenador extends AppCompatActivity {
             if (id == R.id.nav_home) {
                 return true;
             } else if (id == R.id.nav_clientes) {
-                Toast.makeText(this, "Gestión de clientes — próximamente", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, GestionClientesActivity.class));
                 return true;
             } else if (id == R.id.nav_calendario) {
                 startActivity(new Intent(this, CalendarioActivity.class));

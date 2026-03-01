@@ -22,6 +22,9 @@
         android:theme="@style/Theme.SportHub"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".GestionClientesActivity"
+            android:exported="false" />
+        <activity
             android:name=".ListaChatsActivity"
             android:exported="false" />
         <activity
@@ -71,6 +74,9 @@
             android:exported="false" />
         <activity
             android:name=".GestionAusenciasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LesionesClienteActivity"
             android:exported="false" />
     </application>
 
