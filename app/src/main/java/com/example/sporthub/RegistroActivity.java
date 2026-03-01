@@ -33,14 +33,12 @@ public class RegistroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registrolayout);
 
-        // Vistas
         edtName = findViewById(R.id.edtName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnRegister = findViewById(R.id.btnRegister);
         tvGoToLogin = findViewById(R.id.tvGoToLogin);
 
-        // Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -57,7 +55,6 @@ public class RegistroActivity extends AppCompatActivity {
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
 
-        // Validaciones
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
@@ -71,7 +68,6 @@ public class RegistroActivity extends AppCompatActivity {
         btnRegister.setEnabled(false);
         btnRegister.setText("Registrando...");
 
-        // Crear usuario en Firebase Auth
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
 
@@ -88,15 +84,12 @@ public class RegistroActivity extends AppCompatActivity {
 
                         String userId = user.getUid();
 
-                        // Datos a guardar en Firestore
                         Map<String, Object> userMap = new HashMap<>();
                         userMap.put("name", name);
                         userMap.put("email", email);
-                        userMap.put("rol", "c"); // 👈 rol por defecto c== cliente
+                        userMap.put("rol", "c"); // rol por defecto: cliente
                         userMap.put("createdAt", System.currentTimeMillis());
 
-
-                        // Guardar en Firestore
                         db.collection("users")
                                 .document(userId)
                                 .set(userMap)
@@ -104,8 +97,9 @@ public class RegistroActivity extends AppCompatActivity {
                                     Log.d(TAG, "✅ Datos guardados en Firestore");
                                     Toast.makeText(this, "Registro exitoso ✅", Toast.LENGTH_SHORT).show();
 
-                                    startActivity(new Intent(this, MainActivity.class));
-                                    finish();
+                                    // CORRECCIÓN: redirigir según rol leyendo de Firestore,
+                                    // igual que hace LoginActivity, para no hardcodear el destino.
+                                    redirigirSegunRol(userId);
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, "❌ Error Firestore", e);
@@ -122,6 +116,33 @@ public class RegistroActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG).show();
                         resetButton();
                     }
+                });
+    }
+
+    // CORRECCIÓN: redirige a la pantalla correcta según el rol guardado en Firestore
+    private void redirigirSegunRol(String uid) {
+        db.collection("users").document(uid).get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        resetButton();
+                        return;
+                    }
+                    String rol = doc.getString("rol");
+                    Intent intent;
+                    if ("e".equals(rol)) {
+                        intent = new Intent(this, MainActivityEntrenador.class);
+                    } else {
+                        // "c" o cualquier otro valor va a MainActivity (cliente)
+                        intent = new Intent(this, MainActivity.class);
+                    }
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "❌ Error al leer rol", e);
+                    // Si falla la lectura, enviamos a MainActivity por defecto (rol c)
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
                 });
     }
 

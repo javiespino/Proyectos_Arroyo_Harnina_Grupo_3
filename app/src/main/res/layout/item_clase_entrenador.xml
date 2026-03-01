@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardClaseEntrenador"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nombre actividad -->
+        <TextView
+            android:id="@+id/tvNombreActividadEntrenador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre actividad"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#1A237E" />
+
+        <!-- Fecha y hora -->
+        <TextView
+            android:id="@+id/tvFechaHoraEntrenador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="📅 fecha   🕒 hora"
+            android:textSize="13sp"
+            android:textColor="#555555" />
+
+        <!-- Estado -->
+        <TextView
+            android:id="@+id/tvEstadoClaseEntrenador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="✅ Activa"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Sustituto (solo visible si cancelada) -->
+        <TextView
+            android:id="@+id/tvSustitutoEntrenador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="👤 Sustituto: -"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:visibility="gone" />
+
+        <!-- Botón de acción -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAccionAusencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Marcar ausencia"
+            android:textColor="@android:color/white"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

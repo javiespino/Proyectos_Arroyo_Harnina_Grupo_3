@@ -10,6 +10,8 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -101,10 +103,59 @@ public class MainActivity extends AppCompatActivity {
         configurarBotonesAccion();
         configurarChat();
 
-        cargarDatosMeteorologicos();
-        obtenerDatosUsuarioFirebase();
-        cargarProgresoReservas();
-        cargarProximasClases();
+        // CORRECCIÓN: primero verificamos el rol antes de cargar datos.
+        // Si el usuario no es cliente (rol "c"), lo redirigimos a su pantalla correcta.
+        verificarRolYCargarDatos();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // CORRECCIÓN: verificar rol antes de mostrar la pantalla
+    // ══════════════════════════════════════════════════════════════
+
+    private void verificarRolYCargarDatos() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user == null) {
+            // Sin sesión activa → volver al login
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+        db.collection("users").document(user.getUid()).get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        startActivity(new Intent(this, LoginActivity.class));
+                        finish();
+                        return;
+                    }
+
+                    String rol = doc.getString("rol");
+
+                    if ("e".equals(rol)) {
+                        // Es entrenador → redirigir a su pantalla
+                        startActivity(new Intent(this, MainActivityEntrenador.class));
+                        finish();
+                        return;
+                    }
+
+                    // Es cliente (rol "c") o cualquier otro → cargar datos normalmente
+                    String name = doc.getString("name");
+                    if (name != null) tvNombreUsuario.setText(name);
+
+                    cargarDatosMeteorologicos();
+                    cargarProgresoReservas();
+                    cargarProximasClases();
+                    cargarAvisoClasesCanceladas(); // RF 3.19
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error al verificar rol", e);
+                    // Si falla Firestore cargamos igualmente para no bloquear al usuario
+                    cargarDatosMeteorologicos();
+                    cargarProgresoReservas();
+                    cargarProximasClases();
+                    cargarAvisoClasesCanceladas();
+                });
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -115,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) return;
 
-        // Fecha de hoy en formato dd-MM-yyyy para comparar con claseId
         String hoy = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 
         db.collection("reservas")
@@ -130,11 +180,9 @@ public class MainActivity extends AppCompatActivity {
 
                         if (claseId == null) continue;
 
-                        // Extraer fecha del claseId: "Pilates_28-02-2026_12:00"
                         String[] partes = claseId.split("_");
                         if (partes.length >= 2) {
-                            String fechaClase = partes[1]; // "28-02-2026"
-                            // Solo mostrar clases de hoy en adelante
+                            String fechaClase = partes[1];
                             if (esFechaFuturaOHoy(fechaClase, hoy)) {
                                 Reserva r = new Reserva();
                                 r.setClaseId(claseId);
@@ -144,16 +192,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    // Ordenar por fecha (claseId contiene fecha en posición 1)
                     futuras.sort((a, b) -> {
                         String fa = a.getClaseId() != null ? a.getClaseId() : "";
                         String fb = b.getClaseId() != null ? b.getClaseId() : "";
                         return fa.compareTo(fb);
                     });
 
-                    // Máximo 3
                     List<Reserva> top3 = futuras.size() > 3 ? futuras.subList(0, 3) : futuras;
-
                     proximasAdapter.actualizar(new ArrayList<>(top3));
 
                     if (top3.isEmpty()) {
@@ -167,10 +212,6 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar próximas clases", e));
     }
 
-    /**
-     * Compara dos fechas en formato "dd-MM-yyyy".
-     * Devuelve true si fechaClase >= hoy.
-     */
     private boolean esFechaFuturaOHoy(String fechaClase, String hoy) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -180,6 +221,77 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // RF 3.19 — Aviso al cliente si alguna clase está cancelada
+    // ══════════════════════════════════════════════════════════════
+
+    private void cargarAvisoClasesCanceladas() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
+        db.collection("reservas")
+                .whereEqualTo("usuarioId", user.getUid())
+                .whereEqualTo("completada", false)
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (query.isEmpty()) return;
+
+                    List<String> claseIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : query) {
+                        String claseId = doc.getString("claseId");
+                        if (claseId != null) claseIds.add(claseId);
+                    }
+
+                    final int[] consultadas = {0};
+                    final List<String> avisos = new ArrayList<>();
+
+                    for (String claseId : claseIds) {
+                        db.collection("clases").document(claseId).get()
+                                .addOnSuccessListener(claseDoc -> {
+                                    consultadas[0]++;
+
+                                    if (claseDoc.exists()) {
+                                        Boolean cancelada = claseDoc.getBoolean("cancelada");
+                                        if (cancelada != null && cancelada) {
+                                            String actividad = claseDoc.getString("nombreActividad");
+                                            String fecha     = claseDoc.getString("fecha");
+                                            String hora      = claseDoc.getString("hora");
+                                            String sustituto = claseDoc.getString("entrenadorSustituto");
+
+                                            String linea = "• " + actividad + " — " + fecha + " " + hora;
+                                            if (sustituto != null && !sustituto.isEmpty()
+                                                    && !"Sin sustituto".equals(sustituto)) {
+                                                linea += "\n  👤 Sustituto: " + sustituto;
+                                            } else {
+                                                linea += "\n  ⚠️ Sin sustituto asignado";
+                                            }
+                                            avisos.add(linea);
+                                        }
+                                    }
+
+                                    if (consultadas[0] == claseIds.size() && !avisos.isEmpty()) {
+                                        runOnUiThread(() -> mostrarDialogoAvisosCancelaciones(avisos));
+                                    }
+                                })
+                                .addOnFailureListener(e -> consultadas[0]++);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Log.e("MainActivity", "Error al comprobar clases canceladas", e));
+    }
+
+    private void mostrarDialogoAvisosCancelaciones(List<String> avisos) {
+        StringBuilder sb = new StringBuilder("Las siguientes clases han sido canceladas:\n\n");
+        for (String aviso : avisos) {
+            sb.append(aviso).append("\n\n");
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("⚠️ Clases canceladas")
+                .setMessage(sb.toString().trim())
+                .setPositiveButton("Entendido", null)
+                .show();
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -308,21 +420,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // Firebase usuario
-    // ══════════════════════════════════════════════════════════════
-
-    private void obtenerDatosUsuarioFirebase() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            db.collection("users").document(user.getUid()).get()
-                    .addOnSuccessListener(doc -> {
-                        if (doc.exists()) tvNombreUsuario.setText(doc.getString("name"));
-                    })
-                    .addOnFailureListener(e -> Log.e("Firestore", "Error al leer usuario", e));
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════════
     // Botones de acción
     // ══════════════════════════════════════════════════════════════
 
@@ -360,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_chat) {
-                startActivity(new Intent(this, Chat.class));
+                startActivity(new Intent(this, ChatEntrenador.class));
                 overridePendingTransition(0, 0);
                 return true;
             }
